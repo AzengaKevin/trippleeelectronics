@@ -1,0 +1,79 @@
+USECASE
+=======
+- Staff should be able to send Frankline Mawira a Message
+- Direct communication between staff is not really necessary
+- Messages involving the shop should be here
+- A message can also be 
+
+--- Models
+
+User
+====
+- id
+- name
+- email
+- phone
+- created_at
+- updated_at
+- deleted_at
+
+
+Group
+=====
+- name
+- author_user_id
+- created_at
+- updated_at
+- deleted_at
+
+GroupUser
+=========
+- id
+- group_id
+- user_id
+- created_at
+- updated_at
+
+Thread
+======
+- id
+- name # Only for group chats 
+- author_user_id
+- group_id
+- last_updated_at
+- created_at
+- updated_at
+- deleted_at
+
+ThreadUser
+==========
+- id
+- thread_id
+- user_id
+- created_at
+- updated_at
+
+Message
+=======
+- id
+- user_id
+- thread_id
+- message
+- created_at
+- updated_at
+- deleted_at
+
+MessageRead
+- id
+- message_id
+- user_id
+- updated_at
+- created_at
+- deleted_at
+
+- After creating a new message scroll the messages container to the bottom to show the message
+- After polling scroll the container to the bottom
+- When scrolling to the top fetch more old messages and add them to the container
+- We need to support attachments
+- How are we going to show a chat message with more than one attachment
+- Counting unread messages is gonna be interesting

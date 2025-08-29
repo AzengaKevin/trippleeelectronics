@@ -1,0 +1,177 @@
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {
+    faAddressBook,
+    faArrowLeft,
+    faArrowLeftLong,
+    faBan,
+    faBars,
+    faBell,
+    faBox,
+    faBoxes,
+    faBriefcase,
+    faBuilding,
+    faCartPlus,
+    faCashRegister,
+    faChartBar,
+    faChartLine,
+    faCheck,
+    faCheckCircle,
+    faChevronDown,
+    faChevronLeft,
+    faChevronRight,
+    faCircleInfo,
+    faCircleMinus,
+    faCog,
+    faCreditCard,
+    faDownload,
+    faEdit,
+    faEllipsisVertical,
+    faEnvelope,
+    faExchange,
+    faExchangeAlt,
+    faExpand,
+    faEye,
+    faFileContract,
+    faFileExport,
+    faFileImport,
+    faFileInvoice,
+    faFileInvoiceDollar,
+    faHeart,
+    faHeartCirclePlus,
+    faHistory,
+    faHome,
+    faHourglassHalf,
+    faImage,
+    faLayerGroup,
+    faLocationPin,
+    faLock,
+    faMaximize,
+    faMinus,
+    faMoneyBill,
+    faMoneyBillWave,
+    faPaperclip,
+    faPaperPlane,
+    faPen,
+    faPhone,
+    faPlus,
+    faPrint,
+    faReceipt,
+    faRightLeft,
+    faSave,
+    faSearch,
+    faShoppingCart,
+    faSignOut,
+    faSitemap,
+    faSmile,
+    faStore,
+    faSync,
+    faTable,
+    faTachometerAlt,
+    faTag,
+    faTags,
+    faTimes,
+    faToolbox,
+    faTrash,
+    faTrashAlt,
+    faUndo,
+    faUnlockAlt,
+    faUpload,
+    faUser,
+    faUserCog,
+    faUserPlus,
+    faUsers,
+    faUsersCog,
+    faUserShield,
+    faWarehouse,
+} from '@fortawesome/free-solid-svg-icons';
+
+import { faFacebook, faInstagram, faWhatsapp, faXTwitter, faYoutube } from '@fortawesome/free-brands-svg-icons';
+
+library.add(faPhone);
+library.add(faEnvelope);
+library.add(faLocationPin);
+library.add(faEllipsisVertical);
+library.add(faPrint);
+library.add(faEdit);
+library.add(faTrashAlt);
+library.add(faCashRegister);
+library.add(faTachometerAlt);
+library.add(faUser);
+library.add(faBuilding);
+library.add(faUsers);
+library.add(faTags);
+library.add(faStore);
+library.add(faLayerGroup);
+library.add(faBox);
+library.add(faBoxes);
+library.add(faWarehouse);
+library.add(faExchangeAlt);
+library.add(faShoppingCart);
+library.add(faReceipt);
+library.add(faUnlockAlt);
+library.add(faUserShield);
+library.add(faCog);
+library.add(faSignOut);
+library.add(faToolbox);
+library.add(faSitemap);
+library.add(faExchange);
+library.add(faRightLeft);
+library.add(faTag);
+library.add(faUserCog);
+library.add(faHeart);
+library.add(faSearch);
+library.add(faTimes);
+library.add(faChevronRight);
+library.add(faBars);
+library.add(faArrowLeft);
+library.add(faMaximize);
+library.add(faCircleInfo);
+library.add(faFacebook);
+library.add(faXTwitter);
+library.add(faYoutube);
+library.add(faInstagram);
+library.add(faWhatsapp);
+library.add(faChevronLeft);
+library.add(faCreditCard);
+library.add(faLock);
+library.add(faMinus);
+library.add(faPlus);
+library.add(faCartPlus);
+library.add(faCheck);
+library.add(faCheckCircle);
+library.add(faHeartCirclePlus);
+library.add(faChevronDown);
+library.add(faExpand);
+library.add(faTrash);
+library.add(faDownload);
+library.add(faUpload);
+library.add(faMoneyBillWave);
+library.add(faEye);
+library.add(faFileInvoice);
+library.add(faHome);
+library.add(faTable);
+library.add(faFileImport);
+library.add(faBell);
+library.add(faSave);
+library.add(faChartLine);
+library.add(faFileExport);
+library.add(faFileContract);
+library.add(faAddressBook);
+library.add(faChartBar);
+library.add(faPen);
+library.add(faCircleMinus);
+library.add(faSync);
+library.add(faHistory);
+library.add(faHourglassHalf);
+library.add(faPaperPlane);
+library.add(faPaperclip);
+library.add(faSmile);
+library.add(faUsersCog);
+library.add(faBriefcase);
+library.add(faUserPlus);
+library.add(faBan);
+library.add(faUndo);
+library.add(faImage);
+library.add(faArrowLeftLong);
+library.add(faMoneyBill);
+library.add(faFileInvoiceDollar);

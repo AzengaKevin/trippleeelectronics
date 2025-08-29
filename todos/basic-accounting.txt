@@ -1,0 +1,28 @@
+Account
+=======
+- id
+- name
+- type
+- created_at
+- updated_at
+- deleted_at
+
+AccountingPeriod
+================
+- id
+- start
+- end
+- created_at
+- updated_at
+- deleted_at
+
+AccountingEntry
+===============
+- id
+- author_user_id
+- accounting_period_id
+- account_id
+- amount (signed)
+- created_at
+- updated_at
+- deleted_at

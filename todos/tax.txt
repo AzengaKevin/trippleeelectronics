@@ -1,0 +1,40 @@
+Tax
+===
+- id
+- name
+- description
+- rate
+- type (percentage, fixed_amount)
+- is_compound
+- is_inclusive
+- jurisdiction_id
+- created_at
+- updated_at
+- deleted_at
+
+Jurisdiction
+============
+- id
+- name
+- parent_id
+- created_at
+- updated_at
+- deleted_at
+
+Taxable
+==========
+- id
+- tax_id
+- taxable_id
+- taxable_type
+- created_at
+- updated_at
+
+- Use a simple checkbox to include tax option on an order
+- Each item and item variant should be connected to all the tax options available
+- When the product tax option is included computer the tax and save it on the order item
+- Taxes should tied to jurisdictions
+- Start by creating jurisdictions because the tax table requires jurisdictions table
+- Add extra columns to order to capture the tax_amount column
+- Add an extra column to the order item the tax_amount column
+- Use the same table to handle both item and item-variant tax relationship

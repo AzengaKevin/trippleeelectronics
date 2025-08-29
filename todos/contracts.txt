@@ -1,0 +1,25 @@
+Usecase
+=======
+- A staff should only be able to see details of their own contract
+- Frankline Should see the employee details page
+- Frankline should able to read details of comrade computers contract with individual staff
+- Create an employee model where you can track more details about the employees
+- An employee can have multiple contacts indicating whether the employee is string on contaract
+- Is it really important to capture employee payment details
+- Should we keep track of employment payments
+- The contacts should separate from the employees
+- An active employee is the one with an active contract currently
+
+Contract
+========
+- id
+- employee_id
+- contract_type
+- start_type
+- end_date
+- salary
+- status
+- responsibilities
+- created_at
+- updated_at
+- deleted_at
