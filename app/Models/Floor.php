@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Building extends Model
+class Floor extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
-        'property_id',
+        'building_id',
         'name',
         'code',
         'active',
@@ -26,8 +26,8 @@ class Building extends Model
         ];
     }
 
-    public function property(): BelongsTo
+    public function building(): BelongsTo
     {
-        return $this->belongsTo(Property::class);
+        return $this->belongsTo(Building::class);
     }
 }

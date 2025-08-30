@@ -15,6 +15,7 @@ Building
 - property_id(nullable)
 - name
 - code (nullable)
+- active
 - created_at
 - updated_at
 - deleted_at
@@ -25,6 +26,7 @@ Floor
 - building_id
 - name
 - code
+- active
 - created_at
 - updated_at
 - deleted_at
