@@ -2,9 +2,9 @@ Property
 ========
 - id
 - name
-- code
-- address
-- active
+- code (nullable)
+- address (nullable)
+- active (nullable)
 - created_at
 - updated_at
 - deleted_at
@@ -14,7 +14,7 @@ Building
 - id
 - property_id(nullable)
 - name
-- code
+- code (nullable)
 - created_at
 - updated_at
 - deleted_at
