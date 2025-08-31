@@ -55,6 +55,7 @@ Room
 - occupancy
 - accessible
 - status (available, occupied, not-available)
+- price
 - created_at
 - updated_at
 - deleted_at
