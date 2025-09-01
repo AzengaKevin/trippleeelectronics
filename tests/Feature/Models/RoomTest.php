@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Models;
 
+use App\Models\Amenity;
 use App\Models\Building;
 use App\Models\Enums\RoomStatus;
 use App\Models\Floor;
@@ -70,5 +71,16 @@ class RoomTest extends TestCase
             'status' => $room->status,
             'price' => $room->price,
         ]);
+    }
+
+    public function test_amenities_relationship(): void
+    {
+        $room = Room::factory()->for(Building::factory())->create();
+
+        $amenity = Amenity::factory()->create();
+
+        $room->amenities()->attach($amenity);
+
+        $this->assertTrue($room->amenities->contains($amenity));
     }
 }

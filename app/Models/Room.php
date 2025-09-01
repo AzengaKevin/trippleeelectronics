@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Room extends Model
@@ -52,5 +53,13 @@ class Room extends Model
     public function roomType(): BelongsTo
     {
         return $this->belongsTo(RoomType::class);
+    }
+
+    public function amenities(): BelongsToMany
+    {
+        return $this->belongsToMany(Amenity::class, 'amenity_room')
+            ->withPivot('description')
+            ->using(AmenityRoom::class)
+            ->withTimestamps();
     }
 }

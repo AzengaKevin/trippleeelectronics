@@ -68,7 +68,7 @@ Amenity
 - updated_at
 - deleted_at
 
-RoomAmenity
+AmenityRoom
 ===========
  - id
  - room_id
