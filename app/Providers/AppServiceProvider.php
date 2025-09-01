@@ -81,6 +81,14 @@ class AppServiceProvider extends ServiceProvider
                 'media' => \Spatie\MediaLibrary\MediaCollections\Models\Media::class,
                 'tax' => \App\Models\Tax::class,
                 'jurisdiction' => \App\Models\Jurisdiction::class,
+                'property' => \App\Models\Property::class,
+                'building' => \App\Models\Building::class,
+                'floor' => \App\Models\Floor::class,
+                'room' => \App\Models\Room::class,
+                'room-type' => \App\Models\RoomType::class,
+                'reservation' => \App\Models\Reservation::class,
+                'check-event' => \App\Models\CheckEvent::class,
+                'allocation' => \App\Models\Allocation::class,
             ]
         );
     }

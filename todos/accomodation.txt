@@ -1,0 +1,167 @@
+Property
+========
+- id
+- name
+- code (nullable)
+- address (nullable)
+- active (nullable)
+- created_at
+- updated_at
+- deleted_at
+
+Building
+========
+- id
+- property_id(nullable)
+- name
+- code (nullable)
+- active
+- created_at
+- updated_at
+- deleted_at
+
+Floor
+=====
+- id
+- building_id
+- name
+- code
+- active
+- created_at
+- updated_at
+- deleted_at
+
+RooType
+=======
+- id
+- name
+- code
+- occupancy
+- description
+- is_bookable
+- created_at
+- updated_at
+- deleted_at
+
+Room
+====
+- id
+- property_id (nullable)
+- room_type_id (nullable)
+- building_id (required)
+- floor_id (nullable)
+- name
+- code
+- occupancy
+- accessible
+- status (available, occupied, not-available)
+- price
+- created_at
+- updated_at
+- deleted_at
+
+Amenity
+=======
+- id
+- name
+- created_at
+- updated_at
+- deleted_at
+
+AmenityRoom
+===========
+ - id
+ - room_id
+ - amenity_id
+ - created_at
+ - updated_at
+
+Individual
+==========
+- id
+- author_user_id
+- user_id
+- name
+- email
+- phone
+- dob
+- kra_pin
+- id_number
+- address
+- created_at
+- updated_at
+- deleted_at
+
+SourceChannel
+=============
+- id
+- name (walk_in, phone, website, OTA, corporate)
+- code
+- created_at
+- updated_at
+- deleted_at
+
+Reservation
+===========
+- id
+- author_user_id (nullable)
+- property_id (nullable)
+- primary_individual_id
+- source_channel_id
+- reference
+- status (reserved, in-house, check_out, cancelled, no_show)
+- checkin_date
+- checkout_date
+- adults
+- children
+- infants
+- created_at
+- updated_at
+- deleted_at
+
+IndividualReservation
+=====================
+- id
+- reservation_id
+- individual_id
+- role (nullable, primary)
+- created_at
+- updated_at
+
+Allocation
+==========
+- id
+- reservation_id
+- room_type_id
+- room_id
+- stay_date
+- status
+- start
+- duration
+- end
+- occupancy
+- created_at
+- updated_at
+- deleted_at
+
+
+CheckEvent
+==========
+- id
+- reservation_id
+- event_type (checkin/checkout)
+- author_user_id
+- created_at
+- updated_at
+- deleted_at
+
+Note
+====
+- id
+- notable_type
+- notable_id
+- content
+- author_user_id
+- created_at
+- updated_at
+- deleted_at

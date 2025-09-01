@@ -9,10 +9,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('notes', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
-            $table->longText('message')->nullable();
+            $table->foreignIdFor(User::class, 'author_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->uuidMorphs('notable');
+            $table->text('content');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -20,6 +21,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('notes');
     }
 };
