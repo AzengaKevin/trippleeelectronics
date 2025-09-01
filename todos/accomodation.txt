@@ -108,7 +108,7 @@ Reservation
 - property_id (nullable)
 - primary_individual_id
 - source_channel_id
-- code
+- reference
 - status (reserved, in-house, check_out, cancelled, no_show)
 - checkin_date
 - checkout_date
