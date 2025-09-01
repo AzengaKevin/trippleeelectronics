@@ -85,4 +85,21 @@ class ReservationTest extends TestCase
             'infants' => $reservation->infants,
         ]);
     }
+
+    public function test_attaching_individuals_to_reservation(): void
+    {
+        $reservation = Reservation::factory()->for(User::factory(), 'author')->for(Property::factory(), 'property')->for(Individual::factory(), 'primaryIndividual')->for(SourceChannel::factory(), 'sourceChannel')->create();
+
+        $individuals = Individual::factory()->count(3)->create();
+
+        $reservation->individuals()->attach($individuals->pluck('id')->toArray(), ['role' => 'guest']);
+
+        $this->assertCount(3, $reservation->individuals);
+
+        $this->assertDatabaseHas('individual_reservation', [
+            'reservation_id' => $reservation->id,
+            'individual_id' => $individuals[0]->id,
+            'role' => 'guest',
+        ]);
+    }
 }

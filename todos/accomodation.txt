@@ -119,7 +119,7 @@ Reservation
 - updated_at
 - deleted_at
 
-ReservationIndividual
+IndividualReservation
 =====================
 - id
 - reservation_id
@@ -127,7 +127,6 @@ ReservationIndividual
 - role (nullable, primary)
 - created_at
 - updated_at
-- deleted_at
 
 Allocation
 ==========

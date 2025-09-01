@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Reservation extends Model
@@ -74,5 +75,13 @@ class Reservation extends Model
     public function sourceChannel(): BelongsTo
     {
         return $this->belongsTo(SourceChannel::class);
+    }
+
+    public function individuals(): BelongsToMany
+    {
+        return $this->belongsToMany(Individual::class, 'individual_reservation')
+            ->using(IndividualReservation::class)
+            ->withTimestamps()
+            ->withPivot('role');
     }
 }
