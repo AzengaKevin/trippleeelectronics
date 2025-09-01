@@ -160,7 +160,7 @@ Note
 - id
 - notable_type
 - notable_id
-- body
+- content
 - author_user_id
 - created_at
 - updated_at
