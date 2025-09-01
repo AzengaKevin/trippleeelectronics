@@ -150,9 +150,7 @@ CheckEvent
 - id
 - reservation_id
 - event_type (checkin/checkout)
-- occurred_at
 - author_user_id
-- notes
 - created_at
 - updated_at
 - deleted_at

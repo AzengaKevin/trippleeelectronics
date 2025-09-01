@@ -86,6 +86,9 @@ class AppServiceProvider extends ServiceProvider
                 'floor' => \App\Models\Floor::class,
                 'room' => \App\Models\Room::class,
                 'room-type' => \App\Models\RoomType::class,
+                'reservation' => \App\Models\Reservation::class,
+                'check-event' => \App\Models\CheckEvent::class,
+                'allocation' => \App\Models\Allocation::class,
             ]
         );
     }
