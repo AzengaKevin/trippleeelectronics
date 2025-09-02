@@ -9,6 +9,6 @@ Route::get('/create', [PropertyController::class, 'create'])->middleware(['can:c
 Route::get('/export', [PropertyController::class, 'export'])->middleware(['can:export-properties'])->name('export');
 Route::post('/import', [PropertyController::class, 'import'])->middleware(['can:import-properties'])->name('import');
 Route::get('/{property}', [PropertyController::class, 'show'])->middleware(['can:browse-properties'])->name('show');
-Route::get('/{property}/edit', [PropertyController::class, 'edit'])->middleware(['can:edit-properties'])->name('edit');
-Route::put('/{property}', [PropertyController::class, 'update'])->middleware(['can:edit-properties'])->name('update');
+Route::get('/{property}/edit', [PropertyController::class, 'edit'])->middleware(['can:update-properties'])->name('edit');
+Route::put('/{property}', [PropertyController::class, 'update'])->middleware(['can:update-properties'])->name('update');
 Route::delete('/{property}', [PropertyController::class, 'destroy'])->middleware(['can:delete-properties'])->name('destroy');

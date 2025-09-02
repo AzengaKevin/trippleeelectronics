@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backoffice;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePropertyRequest;
+use App\Http\Requests\UpdatePropertyRequest;
 use App\Http\Responses\Concerns\RedirectWithFeedback;
 use App\Models\Property;
 use App\Services\PropertyService;
@@ -49,7 +50,6 @@ class PropertyController extends Controller
                 ->log('Property created.');
 
             return $this->sendSuccessRedirect("You've successfully created a property.", route('backoffice.properties.index'));
-
         } catch (\Throwable $throwable) {
 
             return $this->sendErrorRedirect('There was an error creating the property.', $throwable);
@@ -61,5 +61,32 @@ class PropertyController extends Controller
         return Inertia::render('backoffice/properties/ShowPage', [
             'property' => $property,
         ]);
+    }
+
+    public function edit(Property $property): Response
+    {
+        return Inertia::render('backoffice/properties/EditPage', [
+            'property' => $property,
+        ]);
+    }
+
+    public function update(UpdatePropertyRequest $updatePropertyRequest, Property $property): RedirectResponse
+    {
+        $data = $updatePropertyRequest->validated();
+
+        try {
+
+            $this->propertyService->update($property, $data);
+
+            activity()
+                ->performedOn($property)
+                ->withProperties(['id' => $property->id])
+                ->log('Property updated.');
+
+            return $this->sendSuccessRedirect("You've successfully updated the property.", route('backoffice.properties.index'));
+        } catch (\Throwable $throwable) {
+
+            return $this->sendErrorRedirect('There was an error updating the property.', $throwable);
+        }
     }
 }

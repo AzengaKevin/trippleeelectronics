@@ -82,4 +82,40 @@ class PropertyControllerTest extends TestCase
                 ->where('property.id', $property->id)
         );
     }
+
+    public function test_backoffice_properties_edit_route(): void
+    {
+        $this->withoutExceptionHandling();
+
+        $property = Property::factory()->create();
+
+        $response = $this->actingAs($this->user)->get(route('backoffice.properties.edit', $property));
+
+        $response->assertInertia(
+            fn ($page) => $page
+                ->component('backoffice/properties/EditPage')
+                ->has('property')
+                ->where('property.id', $property->id)
+        );
+    }
+
+    public function test_backoffice_properties_update_route(): void
+    {
+        $this->withoutExceptionHandling();
+
+        $property = Property::factory()->create();
+
+        $payload = [
+            'name' => $this->faker->sentence(),
+            'code' => $this->faker->lexify('CODE-????'),
+            'address' => $this->faker->address(),
+            'active' => $this->faker->boolean(),
+        ];
+
+        $response = $this->actingAs($this->user)->put(route('backoffice.properties.update', $property), $payload);
+
+        $response->assertRedirect(route('backoffice.properties.index'));
+
+        $this->assertDatabaseHas('properties', array_merge(['id' => $property->id], $payload));
+    }
 }
