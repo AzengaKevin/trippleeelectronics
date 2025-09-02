@@ -37,7 +37,7 @@ class PropertyImportTest extends TestCase
             ],
         ];
 
-        $filename = str('resources')->append('-')->append(now()->format('Y-m-d'))->append('.csv')->value();
+        $filename = str('properties')->append('-')->append(now()->format('Y-m-d'))->append('.csv')->value();
 
         $filePath = $this->createTestCsvFile($filename, [
             $titlesRow,
