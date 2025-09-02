@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             BrandSeeder::class,
             PaymentMethodSeeder::class,
+            ItemCategorySeeder::class,
             StoreSeeder::class,
             OrganizationCategorySeeder::class,
             OrganizationSeeder::class,
