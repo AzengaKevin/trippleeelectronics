@@ -167,7 +167,7 @@ class UserService
 
         $avatar = $user->getFirstMedia('avatar');
 
-        $avatarUrl = $avatar ? $avatar->getUrl('preview') : "https://ui-avatars.com/api/?name={$user->name}&background=1E2A44&color=FFD700?size=128&rounded=true";
+        $avatarUrl = $avatar ? $avatar->getUrl('preview') : "https://ui-avatars.com/api/?name={$user->name}&size=128&rounded=true";
 
         return [
             ...$user->only([
