@@ -74,7 +74,7 @@ const { formatDate } = useDate();
                         <table class="table w-full">
                             <tbody>
                                 <tr>
-                                    <th>ID</th>
+                                    <th class="w-1/5">ID</th>
                                     <td>{{ role.id }}</td>
                                 </tr>
                                 <tr>
@@ -96,7 +96,7 @@ const { formatDate } = useDate();
                                 <tr>
                                     <th>Permissions</th>
                                     <td>
-                                        <ul class="list-disc pl-4 text-sm">
+                                        <ul class="flex gap-3 flex-wrap">
                                             <li v-for="permission in role.permissions" :key="permission.id">
                                                 {{ permission.name }}
                                             </li>

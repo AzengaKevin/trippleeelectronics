@@ -2,42 +2,45 @@
 
 namespace Tests\Feature\Imports;
 
-use App\Imports\PropertyImport;
+use App\Imports\BuildingImport;
+use App\Models\Property;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Feature\Traits\WithTestImports;
 use Tests\TestCase;
 
-class PropertyImportTest extends TestCase
+class BuildingImportTest extends TestCase
 {
     use RefreshDatabase, WithFaker, WithTestImports;
 
-    public function test_property_import_logic(): void
+    public function test_import_a_building(): void
     {
 
+        $property = Property::factory()->create(['code' => 'CODE-0001']);
+
         $titlesRow = [
+            'property_code',
             'name',
             'code',
-            'address',
             'active',
         ];
 
         $data = [
             [
-                'name' => 'Property 1',
-                'code' => 'CODE-0001',
-                'address' => 'Address 1',
+                'property_code' => $property->code,
+                'name' => 'Building 1',
+                'code' => 'B-0001',
                 'active' => true,
             ],
             [
-                'name' => 'Property 2',
-                'code' => 'CODE-0002',
-                'address' => 'Address 2',
+                'property_code' => $property->code,
+                'name' => 'Building 2',
+                'code' => 'B-0002',
                 'active' => false,
             ],
         ];
 
-        $filename = str('properties')->append('-')->append(now()->format('Y-m-d'))->append('.csv')->value();
+        $filename = str('buildings')->append('-')->append(now()->format('Y-m-d'))->append('.csv')->value();
 
         $filePath = $this->createTestCsvFile($filename, [
             $titlesRow,
@@ -48,24 +51,23 @@ class PropertyImportTest extends TestCase
 
         try {
 
-            $propertyImport = new PropertyImport;
+            $buildingImport = new BuildingImport;
 
-            $propertyImport->import($filePath);
+            $buildingImport->import($filePath);
 
-            $this->assertDatabaseCount('properties', count: count($data));
+            $this->assertDatabaseCount('buildings', count: count($data));
 
         } catch (\Throwable $throwable) {
 
             collect($data)->each(function ($item) {
-                $this->assertDatabaseHas('resources', [
+                $this->assertDatabaseHas('buildings', [
                     'name' => data_get($item, 'name'),
                     'code' => data_get($item, 'code'),
-                    'address' => data_get($item, 'address'),
-                    'active' => data_get($item, 'active'),
+                    'active' => data_get($item, 'active') ? 1 : 0,
                 ]);
             });
 
-            unlink($filePath);
+            throw $throwable;
         }
     }
 }
