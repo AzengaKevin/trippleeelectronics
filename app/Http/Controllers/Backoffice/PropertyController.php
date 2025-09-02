@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Backoffice;
 
 use App\Exports\PropertyExport;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ImportRequest;
 use App\Http\Requests\StorePropertyRequest;
 use App\Http\Requests\UpdatePropertyRequest;
 use App\Http\Responses\Concerns\RedirectWithFeedback;
+use App\Imports\PropertyImport;
 use App\Models\Property;
+use App\Services\ExcelService;
 use App\Services\PropertyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +19,7 @@ use Inertia\Response;
 
 class PropertyController extends Controller
 {
-    use RedirectWithFeedback;
+    use ExcelService, RedirectWithFeedback;
 
     public function __construct(private readonly PropertyService $propertyService) {}
 
@@ -116,5 +119,22 @@ class PropertyController extends Controller
         $propertyExport = new PropertyExport($params);
 
         return $propertyExport->download(Property::getExportFilename());
+    }
+
+    public function import(ImportRequest $importRequest): RedirectResponse
+    {
+        $data = $importRequest->validated();
+
+        try {
+
+            $file = data_get($data, 'file');
+
+            $this->robustImport(new PropertyImport, $file, 'properties', 'property');
+
+            return $this->sendSuccessRedirect("You've successfully imported the properties.", route('backoffice.properties.index'));
+        } catch (\Throwable $throwable) {
+
+            return $this->sendErrorRedirect('There was an error importing the properties.', $throwable);
+        }
     }
 }

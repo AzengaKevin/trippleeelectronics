@@ -4,6 +4,7 @@ import useDate from '@/composables/useDate';
 import useProperties from '@/composables/useProperties';
 import useSwal from '@/composables/useSwal';
 import BackofficeLayout from '@/layouts/BackofficeLayout.vue';
+import ImportPropertiesDialog from '@/Pages/backoffice/properties/ImportPropertiesDialog.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
 import { Download, Plus, Upload } from 'lucide-vue-next';
@@ -92,7 +93,11 @@ watch(
                     <Plus class="h-4 w-4" />
                     <span>New</span>
                 </Link>
-                <button v-if="auth.permissions.includes('import-properties')" class="btn btn-sm btn-outline btn-primary rounded-full">
+                <button
+                    v-if="auth.permissions.includes('import-properties')"
+                    class="btn btn-sm btn-outline btn-primary rounded-full"
+                    onclick="importPropertiesDialog.showModal()"
+                >
                     <Upload class="h-4 w-4" />
                     <span>Import</span>
                 </button>
@@ -176,4 +181,8 @@ watch(
             </div>
         </div>
     </BackofficeLayout>
+
+    <teleport to="body">
+        <ImportPropertiesDialog />
+    </teleport>
 </template>

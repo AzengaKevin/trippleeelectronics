@@ -65,4 +65,16 @@ class PropertyService
             return $property->delete();
         });
     }
+
+    public function importRow(array $data)
+    {
+        $attributes = [
+            'name' => data_get($data, 'name'),
+            'code' => data_get($data, 'code'),
+            'address' => data_get($data, 'address'),
+            'active' => data_get($data, 'active', true),
+        ];
+
+        return Property::query()->create($attributes);
+    }
 }

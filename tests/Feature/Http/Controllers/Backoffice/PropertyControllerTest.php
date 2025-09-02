@@ -6,6 +6,7 @@ use App\Models\Property;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
 use Tests\Feature\Traits\CreateAuthorizedUser;
 use Tests\TestCase;
@@ -142,6 +143,19 @@ class PropertyControllerTest extends TestCase
         $response->assertSessionHasNoErrors();
 
         Excel::assertDownloaded(Property::getExportFilename());
+    }
+
+    public function test_backoffice_properties_import_route(): void
+    {
+        Excel::fake();
+
+        $response = $this->actingAs($this->user)->post(route('backoffice.properties.import'), [
+            'file' => UploadedFile::fake()->create('properties.xlsx', 100),
+        ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $response->assertRedirect(route('backoffice.properties.index'));
 
     }
 }
