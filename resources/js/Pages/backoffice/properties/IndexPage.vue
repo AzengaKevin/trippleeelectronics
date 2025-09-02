@@ -1,8 +1,8 @@
 <script setup>
-import AppAlert from '@/components/AppAlert.vue';
 import AppPagination from '@/components/AppPagination.vue';
 import useDate from '@/composables/useDate';
 import useProperties from '@/composables/useProperties';
+import useSwal from '@/composables/useSwal';
 import BackofficeLayout from '@/layouts/BackofficeLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
@@ -43,6 +43,8 @@ const { formatDate } = useDate();
 
 const { deleteProperty } = useProperties();
 
+const { showFeedbackSwal } = useSwal();
+
 const filters = reactive({
     ...props.params,
 });
@@ -62,6 +64,16 @@ watch(
         );
     }, 500),
     { deep: true },
+);
+
+watch(
+    () => props.feedback,
+    (newFeedback) => {
+        if (newFeedback?.type && newFeedback?.message) {
+            showFeedbackSwal(newFeedback.type, newFeedback.message);
+        }
+    },
+    { immediate: true },
 );
 </script>
 <template>
@@ -85,8 +97,6 @@ watch(
                     <span>Import</span>
                 </button>
             </div>
-
-            <app-alert :feedback="feedback" />
 
             <div class="grid grid-cols-12 items-start gap-4">
                 <div class="top-0 col-span-12 lg:sticky lg:order-last lg:col-span-3">

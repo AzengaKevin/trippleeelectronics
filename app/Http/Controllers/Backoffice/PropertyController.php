@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Backoffice;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePropertyRequest;
+use App\Http\Responses\Concerns\RedirectWithFeedback;
+use App\Models\Property;
+use App\Services\PropertyService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Models\Property;
-use Illuminate\Http\Request;
-use App\Services\PropertyService;
-use App\Http\Controllers\Controller;
-use App\Http\Responses\Concerns\RedirectWithFeedback;
 
 class PropertyController extends Controller
 {
@@ -26,6 +28,32 @@ class PropertyController extends Controller
             'properties' => $properties,
             'params' => $params,
         ]);
+    }
+
+    public function create(): Response
+    {
+        return Inertia::render('backoffice/properties/CreatePage');
+    }
+
+    public function store(StorePropertyRequest $storePropertyRequest): RedirectResponse
+    {
+        $data = $storePropertyRequest->validated();
+
+        try {
+
+            $store = $this->propertyService->create($data);
+
+            activity()
+                ->performedOn($store)
+                ->withProperties(['id' => $store->id])
+                ->log('Property created.');
+
+            return $this->sendSuccessRedirect("You've successfully created a property.", route('backoffice.properties.index'));
+
+        } catch (\Throwable $throwable) {
+
+            return $this->sendErrorRedirect('There was an error creating the property.', $throwable);
+        }
     }
 
     public function show(Property $property): Response
