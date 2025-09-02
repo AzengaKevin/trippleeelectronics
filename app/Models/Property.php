@@ -23,4 +23,9 @@ class Property extends Model
     {
         return $this->only(['name', 'code', 'address']);
     }
+
+    public static function getExportFilename(): string
+    {
+        return str('properties-')->append(now()->format('Y-m-d'))->append('.xlsx')->value();
+    }
 }

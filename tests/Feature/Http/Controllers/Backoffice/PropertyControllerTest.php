@@ -6,6 +6,7 @@ use App\Models\Property;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Maatwebsite\Excel\Facades\Excel;
 use Tests\Feature\Traits\CreateAuthorizedUser;
 use Tests\TestCase;
 
@@ -130,5 +131,17 @@ class PropertyControllerTest extends TestCase
         $this->assertSoftDeleted('properties', [
             'id' => $property->id,
         ]);
+    }
+
+    public function test_backoffice_properties_export_route(): void
+    {
+        Excel::fake();
+
+        $response = $this->actingAs($this->user)->get(route('backoffice.properties.export'));
+
+        $response->assertSessionHasNoErrors();
+
+        Excel::assertDownloaded(Property::getExportFilename());
+
     }
 }

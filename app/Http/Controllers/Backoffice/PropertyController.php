@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backoffice;
 
+use App\Exports\PropertyExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePropertyRequest;
 use App\Http\Requests\UpdatePropertyRequest;
@@ -102,10 +103,18 @@ class PropertyController extends Controller
                 ->log('Property deleted.');
 
             return $this->sendSuccessRedirect("You've successfully deleted the property.", route('backoffice.properties.index'));
-
         } catch (\Throwable $throwable) {
 
             return $this->sendErrorRedirect('There was an error deleting the property.', $throwable);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $params = $request->only('query', 'limit');
+
+        $propertyExport = new PropertyExport($params);
+
+        return $propertyExport->download(Property::getExportFilename());
     }
 }
