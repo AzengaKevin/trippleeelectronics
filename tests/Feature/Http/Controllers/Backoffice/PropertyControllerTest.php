@@ -118,4 +118,17 @@ class PropertyControllerTest extends TestCase
 
         $this->assertDatabaseHas('properties', array_merge(['id' => $property->id], $payload));
     }
+
+    public function test_backoffice_properties_destroy_route(): void
+    {
+        $property = Property::factory()->create();
+
+        $response = $this->actingAs($this->user)->delete(route('backoffice.properties.destroy', $property));
+
+        $response->assertRedirect(route('backoffice.properties.index'));
+
+        $this->assertSoftDeleted('properties', [
+            'id' => $property->id,
+        ]);
+    }
 }

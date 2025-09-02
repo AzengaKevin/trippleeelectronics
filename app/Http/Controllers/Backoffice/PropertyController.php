@@ -89,4 +89,23 @@ class PropertyController extends Controller
             return $this->sendErrorRedirect('There was an error updating the property.', $throwable);
         }
     }
+
+    public function destroy(Property $property): RedirectResponse
+    {
+        try {
+
+            $this->propertyService->delete($property);
+
+            activity()
+                ->performedOn($property)
+                ->withProperties(['id' => $property->id])
+                ->log('Property deleted.');
+
+            return $this->sendSuccessRedirect("You've successfully deleted the property.", route('backoffice.properties.index'));
+
+        } catch (\Throwable $throwable) {
+
+            return $this->sendErrorRedirect('There was an error deleting the property.', $throwable);
+        }
+    }
 }

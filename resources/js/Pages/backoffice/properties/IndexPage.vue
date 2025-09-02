@@ -70,7 +70,7 @@ watch(
     () => props.feedback,
     (newFeedback) => {
         if (newFeedback?.type && newFeedback?.message) {
-            showFeedbackSwal(newFeedback.type, newFeedback.message);
+            showFeedbackSwal(newFeedback);
         }
     },
     { immediate: true },

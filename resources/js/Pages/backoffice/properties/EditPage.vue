@@ -52,7 +52,6 @@ watch(
 );
 </script>
 <template>
-
     <Head>
         <title>Edit Property</title>
     </Head>
@@ -82,8 +81,7 @@ watch(
                         <p v-if="form.errors.address" class="text-error">{{ form.errors.address }}</p>
                     </div>
                     <div class="flex gap-2">
-                        <input v-model="form.active" :value="true" type="checkbox" id="active"
-                            class="checkbox checkbox-primary" />
+                        <input v-model="form.active" :value="true" type="checkbox" id="active" class="checkbox checkbox-primary" />
                         <label for="active" class="label">
                             <span class="label-text">Active</span>
                         </label>
