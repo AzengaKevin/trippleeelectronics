@@ -226,6 +226,12 @@ class PermissionSeeder extends Seeder
             'update-taxes',
             'delete-taxes',
             'export-taxes',
+            'browse-properties',
+            'create-properties',
+            'import-properties',
+            'update-properties',
+            'delete-properties',
+            'export-properties',
         ])->each(fn ($name) => Permission::query()->updateOrCreate(compact('name')));
     }
 }

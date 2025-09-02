@@ -89,6 +89,7 @@ class AppServiceProvider extends ServiceProvider
                 'reservation' => \App\Models\Reservation::class,
                 'check-event' => \App\Models\CheckEvent::class,
                 'allocation' => \App\Models\Allocation::class,
+                'note' => \App\Models\Note::class,
             ]
         );
     }

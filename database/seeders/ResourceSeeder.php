@@ -429,6 +429,17 @@ class ResourceSeeder extends Seeder
                     'required_permission' => 'browse-taxes',
                     'morph_class' => 'tax',
                 ],
+                [
+                    'name' => 'Properties',
+                    'route_name' => 'backoffice.properties.index',
+                    'icon' => 'building',
+                    'order' => 39,
+                    'description' => 'Manage property records',
+                    'is_active' => true,
+                    'count' => 0,
+                    'required_permission' => 'browse-properties',
+                    'morph_class' => 'property',
+                ],
             ]
         )->each(function ($item, $index) {
 

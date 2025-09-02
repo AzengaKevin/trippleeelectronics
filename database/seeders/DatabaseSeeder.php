@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             IndividualSeeder::class,
             ResourceSeeder::class,
             ServiceSeeder::class,
+            PropertySeeder::class,
+            AmenitySeeder::class,
         ]);
     }
 }
