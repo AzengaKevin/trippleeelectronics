@@ -9,8 +9,8 @@ class PropertyService
 {
     public function get(
         ?string $query = null,
-        ?string $sortBy = 'created_at',
-        ?string $sortDirection = 'asc',
+        ?string $orderBy = 'created_at',
+        ?string $orderDirection = 'asc',
         ?int $perPage = 24,
         ?int $limit = null,
         ?array $with = null,
@@ -22,7 +22,7 @@ class PropertyService
                 ->when($withCount, fn ($query) => $query->withCount($withCount));
         });
 
-        $propertyQuery->orderBy($sortBy ?? 'created_at', $sortDirection);
+        $propertyQuery->orderBy($orderBy, $orderDirection);
 
         return is_null($perPage)
             ? $propertyQuery->get()
