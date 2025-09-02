@@ -105,7 +105,7 @@ watch(
                                 </tr>
                                 <tr>
                                     <th class="w-1/3">POS Name</th>
-                                    <td class="w-2/3">{{ item.pos_name }}</td>
+                                    <td class="w-2/3">{{ item.pos_name ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="w-1/3">Image</th>

@@ -86,7 +86,7 @@ const { logout } = useLogout();
                             <span class="inline-block border-l">&nbsp;</span>
                             <button class="hover:text-primary text-sm font-light hover:underline" @click="logout">Logout</button>
                             <span class="inline-block border-l">&nbsp;</span>
-                            <Link class="hover:text-primary text-sm font-light hover:underline" :href="'#'">Orders </Link>
+                            <Link class="hover:text-primary text-sm font-light hover:underline" :href="route('account.orders.index')">Orders </Link>
                             <span class="inline-block border-l">&nbsp;</span>
                             <Link class="hover:text-primary text-sm font-light hover:underline" :href="route('account.dashboard')">My Account</Link>
                         </template>

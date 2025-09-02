@@ -77,7 +77,7 @@ const updateRole = () => {
                         <!-- Permissions Section -->
                         <fieldset class="space-y-2">
                             <legend class="mb-2 text-lg font-semibold">Permissions</legend>
-                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                                 <div v-for="({ id, name }, index) in permissions" :key="id">
                                     <label class="flex cursor-pointer items-center gap-2">
                                         <input type="checkbox" v-model="form.permissions" :value="id" class="checkbox checkbox-primary" />
