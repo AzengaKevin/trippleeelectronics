@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 
 class Room extends Model
 {
-    use HasFactory, HasUuids, SoftDeletes;
+    use HasFactory, HasUuids, Searchable, SoftDeletes;
 
     protected $fillable = [
         'property_id',
@@ -24,6 +25,7 @@ class Room extends Model
         'occupancy',
         'active',
         'status',
+        'price',
     ];
 
     protected function casts()
@@ -32,6 +34,7 @@ class Room extends Model
             'occupancy' => 'integer',
             'active' => 'boolean',
             'status' => RoomStatus::class,
+            'price' => 'decimal:2',
         ];
     }
 
@@ -61,5 +64,15 @@ class Room extends Model
             ->withPivot('description')
             ->using(AmenityRoom::class)
             ->withTimestamps();
+    }
+
+    public function toSearchableArray()
+    {
+        return $this->only(['name', 'code']);
+    }
+
+    public static function getExportFilename(): string
+    {
+        return str('rooms-')->append(now()->format('Y-m-d'))->append('.xlsx');
     }
 }
