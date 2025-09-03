@@ -16,12 +16,12 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->nullable()->unique()->constrained()->nullOnDelete();
             $table->foreignIdFor(Organization::class)->nullable()->constrained()->nullOnDelete();
             $table->string('name');
-            $table->string('username')->nullable()->unique();
-            $table->string('email')->nullable()->unique();
-            $table->string('phone')->nullable()->unique();
+            $table->string('username')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
             $table->string('address')->nullable();
-            $table->string('kra_pin')->nullable()->unique();
-            $table->string('id_number')->nullable()->unique();
+            $table->string('kra_pin')->nullable();
+            $table->string('id_number')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

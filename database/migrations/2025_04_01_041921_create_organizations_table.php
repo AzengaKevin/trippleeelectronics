@@ -14,11 +14,11 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignIdFor(User::class, 'author_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignIdFor(OrganizationCategory::class)->nullable()->constrained()->nullOnDelete();
-            $table->string('name')->unique();
-            $table->string('email')->nullable()->unique();
+            $table->string('name');
+            $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
-            $table->string('kra_pin')->nullable()->unique();
+            $table->string('kra_pin')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

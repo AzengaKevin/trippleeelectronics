@@ -11,7 +11,14 @@ return new class extends Migration
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
+            $table->string('phone_number')->nullable();
+            $table->string('paybill_number')->nullable();
+            $table->string('account_number')->nullable();
+            $table->string('till_number')->nullable();
+            $table->string('account_name')->nullable();
+            $table->string('default_payment_status')->nullable();
             $table->text('description')->nullable();
+            $table->jsonb('required_fields')->nullable();
             $table->jsonb('properties')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('reference');
+            $table->string('reference')->unique();
             $table->nullableUuidMorphs('customer');
             $table->foreignIdFor(User::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(User::class, 'author_user_id')->nullable()->constrained('users')->nullOnDelete();
@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('tax_amount', 10, 2)->nullable();
             $table->decimal('discount_amount', 10, 2)->nullable();
             $table->decimal('total_amount', 10, 2)->nullable();
+            $table->decimal('tendered_amount', 10, 2)->nullable();
+            $table->decimal('balance_amount', 10, 2)->nullable();
             $table->string('order_status')->default('pending');
             $table->string('payment_status')->default('unpaid');
             $table->string('fulfillment_status')->nullable();

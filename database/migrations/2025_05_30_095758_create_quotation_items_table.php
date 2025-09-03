@@ -15,6 +15,9 @@ return new class extends Migration
             $table->uuidMorphs('item');
             $table->integer('quantity')->default(1);
             $table->decimal('price', 10, 2);
+            $table->boolean('taxable')->nullable()->default(false);
+            $table->decimal('tax_rate', 5, 2)->nullable()->default(0);
+            $table->decimal('discount_rate', 5, 2)->nullable()->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Thread;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -12,6 +13,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Thread::class)->nullable()->constrained()->cascadeOnDelete();
             $table->longText('message')->nullable();
             $table->timestamps();
             $table->softDeletes();

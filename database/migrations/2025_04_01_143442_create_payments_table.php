@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\PaymentMethod;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -12,10 +13,12 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignIdFor(User::class, 'author_user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->nullableMorphs('payable');
-            $table->nullableMorphs('payer');
-            $table->nullableMorphs('payee');
+            $table->foreignIdFor(PaymentMethod::class, 'payment_method_id')->nullable()->constrained('payment_methods')->nullOnDelete();
+            $table->nullableUuidMorphs('payable');
+            $table->nullableUuidMorphs('payer');
+            $table->nullableUuidMorphs('payee');
             $table->string('payment_method')->nullable();
+            $table->string('phone_number')->nullable();
             $table->string('status')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
             $table->timestamps();

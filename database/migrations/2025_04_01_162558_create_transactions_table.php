@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(Payment::class)->nullable()->constrained()->nullOnDelete();
             $table->decimal('amount', 10, 2)->nullable();
             $table->string('transaction_method')->nullable();
+            $table->string('status')->default('pending');
             $table->string('till')->nullable();
             $table->string('paybill')->nullable();
             $table->string('account_number')->nullable();
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->string('reference')->nullable();
             $table->string('local_reference')->nullable();
             $table->decimal('fee', 10, 2)->nullable();
+            $table->jsonb('data')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

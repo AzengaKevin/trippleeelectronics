@@ -20,11 +20,14 @@ return new class extends Migration
             $table->string('image_url')->nullable();
             $table->string('sku')->unique();
             $table->string('name')->unique();
+            $table->string('pos_name')->nullable()->unique();
             $table->string('slug')->unique();
             $table->decimal('cost', 10, 2);
             $table->decimal('price', 10, 2);
             $table->decimal('selling_price', 10, 2)->nullable();
             $table->longText('description')->nullable();
+            $table->string('pos_description')->nullable();
+            $table->decimal('tax_rate', 5, 2)->nullable()->default(0.00);
             $table->unsignedBigInteger('quantity')->default(0);
             $table->timestamps();
             $table->softDeletes();
