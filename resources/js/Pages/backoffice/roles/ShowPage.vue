@@ -96,7 +96,7 @@ const { formatDate } = useDate();
                                 <tr>
                                     <th>Permissions</th>
                                     <td>
-                                        <ul class="flex gap-3 flex-wrap">
+                                        <ul class="flex flex-wrap gap-3">
                                             <li v-for="permission in role.permissions" :key="permission.id">
                                                 {{ permission.name }}
                                             </li>

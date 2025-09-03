@@ -48,3 +48,4 @@ Route::prefix('media')->as('media.')->group(base_path('routes/backoffice/media.p
 Route::prefix('accounting')->as('accounting.')->group(base_path('routes/backoffice/accounting.php'));
 Route::prefix('taxes')->as('taxes.')->group(base_path('routes/backoffice/taxes.php'));
 Route::prefix('buildings')->as('buildings.')->group(base_path('routes/backoffice/buildings.php'));
+Route::prefix('rooms')->as('rooms.')->group(base_path('routes/backoffice/rooms.php'));

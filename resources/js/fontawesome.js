@@ -23,6 +23,7 @@ import {
     faCircleMinus,
     faCog,
     faCreditCard,
+    faDoorOpen,
     faDownload,
     faEdit,
     faEllipsisVertical,
@@ -175,3 +176,4 @@ library.add(faImage);
 library.add(faArrowLeftLong);
 library.add(faMoneyBill);
 library.add(faFileInvoiceDollar);
+library.add(faDoorOpen);

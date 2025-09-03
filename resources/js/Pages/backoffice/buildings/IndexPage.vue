@@ -125,7 +125,7 @@ watch(
                                     <span>Reset</span>
                                 </Link>
                                 <a
-                                    v-if="auth.permissions.includes('export-brands')"
+                                    v-if="auth.permissions.includes('export-buildings')"
                                     :href="route('backoffice.buildings.export', filters)"
                                     class="btn btn-sm btn-outline btn-primary rounded-full"
                                 >
