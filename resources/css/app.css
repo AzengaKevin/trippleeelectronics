@@ -1,8 +1,17 @@
 @import 'tailwindcss';
 @plugin 'tailwind-scrollbar';
 @plugin "tailwindcss-animate";
+
 @plugin "daisyui" {
-    themes: light --default;
+    themes: false;
+}
+
+@plugin "daisyui/theme" {
+    name: 'light';
+    default: true;
+    --color-primary: #004f63;
+    --color-secondary: #fb4002;
+    --color-accent: #4ade80;
 }
 
 body,

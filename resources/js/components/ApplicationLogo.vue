@@ -13,5 +13,5 @@ defineProps({
 const appName = import.meta.env.VITE_APP_NAME;
 </script>
 <template>
-    <img src="@/assets/images/logo.png" :alt="`${appName} Logo`" class="h-16" />
+    <img src="@/assets/images/logo.png" :alt="`${appName} Logo`" class="h-32" />
 </template>
