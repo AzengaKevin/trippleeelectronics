@@ -451,6 +451,17 @@ class ResourceSeeder extends Seeder
                     'required_permission' => 'browse-buildings',
                     'morph_class' => 'building',
                 ],
+                [
+                    'name' => 'Rooms',
+                    'route_name' => 'backoffice.rooms.index',
+                    'icon' => 'door-open',
+                    'order' => 41,
+                    'description' => 'Manage room records',
+                    'is_active' => true,
+                    'count' => 0,
+                    'required_permission' => 'browse-rooms',
+                    'morph_class' => 'room',
+                ],
             ]
         )->each(function ($item, $index) {
 
