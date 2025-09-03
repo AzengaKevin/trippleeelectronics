@@ -124,7 +124,7 @@ const selectedCategoryChildren = computed(() => {
                                         </a>
                                     </li>
                                 </ul>
-                                <p v-else class="text-sm text-gray-500 px-2">No Categories</p>
+                                <p v-else class="px-2 text-sm text-gray-500">No Categories</p>
                             </div>
                         </DialogPanel>
                     </TransitionChild>
