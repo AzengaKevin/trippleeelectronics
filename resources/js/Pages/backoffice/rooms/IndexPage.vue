@@ -1,10 +1,11 @@
 <script setup>
 import AppPagination from '@/components/AppPagination.vue';
 import useDate from '@/composables/useDate';
-import useProperties from '@/composables/useProperties';
+import usePrice from '@/composables/usePrice';
+import useRooms from '@/composables/useRooms';
 import useSwal from '@/composables/useSwal';
 import BackofficeLayout from '@/layouts/BackofficeLayout.vue';
-import ImportPropertiesDialog from '@/Pages/backoffice/properties/ImportPropertiesDialog.vue';
+import ImportRoomsDialog from '@/Pages/backoffice/rooms/ImportRoomsDialog.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
 import { Download, Plus, Upload } from 'lucide-vue-next';
@@ -15,7 +16,7 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    properties: {
+    rooms: {
         type: Object,
         required: true,
     },
@@ -35,16 +36,18 @@ const breadcrumbs = [
         href: route('backoffice.dashboard'),
     },
     {
-        title: 'Properties',
+        title: 'Rooms',
         href: null,
     },
 ];
 
 const { formatDate } = useDate();
 
-const { deleteProperty } = useProperties();
+const { deleteRoom } = useRooms();
 
 const { showFeedbackSwal } = useSwal();
+
+const { formatPrice } = usePrice();
 
 const filters = reactive({
     ...props.params,
@@ -54,7 +57,7 @@ watch(
     filters,
     debounce((newFilters) => {
         router.get(
-            route('backoffice.properties.index'),
+            route('backoffice.rooms.index'),
             {
                 ...newFilters,
             },
@@ -79,24 +82,24 @@ watch(
 </script>
 <template>
     <Head>
-        <title>Properties</title>
+        <title>Rooms</title>
     </Head>
 
-    <BackofficeLayout :breadcrumbs="breadcrumbs" title="Properties">
+    <BackofficeLayout :breadcrumbs="breadcrumbs" title="Rooms">
         <div class="space-y-4">
             <div class="flex flex-wrap items-center gap-3">
                 <Link
-                    v-if="auth.permissions.includes('create-properties')"
-                    :href="route('backoffice.properties.create')"
+                    v-if="auth.permissions.includes('create-rooms')"
+                    :href="route('backoffice.rooms.create')"
                     class="btn btn-sm btn-outline btn-primary rounded-full"
                 >
                     <Plus class="h-4 w-4" />
                     <span>New</span>
                 </Link>
                 <button
-                    v-if="auth.permissions.includes('import-properties')"
+                    v-if="auth.permissions.includes('import-rooms')"
                     class="btn btn-sm btn-outline btn-primary rounded-full"
-                    onclick="importPropertiesDialog.showModal()"
+                    onclick="importRoomsDialog.showModal()"
                 >
                     <Upload class="h-4 w-4" />
                     <span>Import</span>
@@ -116,13 +119,13 @@ watch(
                             </div>
                             <hr />
                             <div class="flex flex-wrap gap-3">
-                                <Link :href="route('backoffice.properties.index')" class="btn btn-sm btn-outline btn-warning rounded-full">
+                                <Link :href="route('backoffice.rooms.index')" class="btn btn-sm btn-outline btn-warning rounded-full">
                                     <font-awesome-icon icon="times" />
                                     <span>Reset</span>
                                 </Link>
                                 <a
-                                    v-if="auth.permissions.includes('export-properties')"
-                                    :href="route('backoffice.properties.export', filters)"
+                                    v-if="auth.permissions.includes('export-rooms')"
+                                    :href="route('backoffice.rooms.export', filters)"
                                     class="btn btn-sm btn-outline btn-primary rounded-full"
                                 >
                                     <Download class="h-4 w-4" />
@@ -141,40 +144,49 @@ watch(
                                         <tr>
                                             <th>#</th>
                                             <th>Name</th>
+                                            <th>Price</th>
                                             <th>Created At</th>
                                             <th>Updated At</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(property, index) in props.properties.data" :key="property.id">
-                                            <td>{{ index + 1 }}</td>
-                                            <td>
-                                                <Link :href="route('backoffice.properties.show', [property.id])" class="text-primary">{{
-                                                    property.name
-                                                }}</Link>
-                                            </td>
-                                            <td>{{ formatDate(property.created_at, 'YY-MM-DD HH:mm:ss') }}</td>
-                                            <td>{{ formatDate(property.updated_at, 'YY-MM-DD HH:mm:ss') }}</td>
-                                            <td>
-                                                <div class="dropdown dropdown-end">
-                                                    <div tabindex="0" role="button" class="btn btn-sm btn-ghost m-1">
-                                                        <font-awesome-icon icon="ellipsis-vertical" />
+                                        <template v-if="props.rooms.data.length">
+                                            <tr v-for="(room, index) in props.rooms.data" :key="room.id">
+                                                <td>{{ index + 1 }}</td>
+                                                <td>
+                                                    <Link :href="route('backoffice.rooms.show', [room.id])" class="text-primary">{{
+                                                        room.name
+                                                    }}</Link>
+                                                </td>
+                                                <td>{{ formatPrice(room.price) }}</td>
+                                                <td>{{ formatDate(room.created_at, 'YY-MM-DD HH:mm:ss') }}</td>
+                                                <td>{{ formatDate(room.updated_at, 'YY-MM-DD HH:mm:ss') }}</td>
+                                                <td>
+                                                    <div class="dropdown dropdown-end">
+                                                        <div tabindex="0" role="button" class="btn btn-sm btn-ghost m-1">
+                                                            <font-awesome-icon icon="ellipsis-vertical" />
+                                                        </div>
+                                                        <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
+                                                            <li>
+                                                                <Link :href="route('backoffice.rooms.edit', [room.id])"> Edit</Link>
+                                                            </li>
+                                                            <li><a href="#" role="button" @click="deleteRoom(room)">Delete</a></li>
+                                                        </ul>
                                                     </div>
-                                                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
-                                                        <li>
-                                                            <Link :href="route('backoffice.properties.edit', [property.id])"> Edit</Link>
-                                                        </li>
-                                                        <li><a href="#" role="button" @click="deleteProperty(property)">Delete</a></li>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                        <template v-else>
+                                            <tr>
+                                                <td colspan="6" class="text-center">No rooms found</td>
+                                            </tr>
+                                        </template>
                                     </tbody>
                                 </table>
                             </div>
 
-                            <app-pagination :resource="properties" />
+                            <app-pagination :resource="rooms" />
                         </div>
                     </div>
                 </div>
@@ -183,6 +195,6 @@ watch(
     </BackofficeLayout>
 
     <teleport to="body">
-        <ImportPropertiesDialog />
+        <ImportRoomsDialog />
     </teleport>
 </template>
