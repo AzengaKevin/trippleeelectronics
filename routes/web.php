@@ -8,7 +8,38 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Middleware\BlockOutOfContractEmployee;
 use App\Http\Middleware\BlockSuspendedEmployee;
+use App\Models\Allocation;
+use App\Models\Enums\ReservationStatus;
+use App\Models\Individual;
+use App\Models\Property;
+use App\Models\Reservation;
+use App\Models\Room;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/test', function () {
+
+    $reservation = Reservation::query()->create([
+        'author_user_id' => User::query()->first()->id,
+        'property_id' => Property::query()->first()->id,
+        'primary_individual_id' => Individual::inRandomOrder()->first()->id,
+        'status' => ReservationStatus::RESERVED,
+        'checkin_date' => now()->toDateString(),
+        'checkout_date' => now()->toDateString(),
+        'adults' => 3,
+    ]);
+
+    $allocation = Allocation::query()->create([
+        'reservation_id' => $reservation->id,
+        'property_id' => $reservation->property_id,
+        'room_id' => Room::query()->inRandomOrder()->first()->id,
+        'date' => now()->toDateString(),
+        'start' => now()->setTime(16, 0, 0)->toDateTimeString(),
+        'end' => now()->setTime(18, 0, 0)->toDateTimeString(),
+    ]);
+
+    dd($allocation);
+})->name('test');
 
 Route::get('/', WelcomeController::class)->name('welcome');
 Route::get('/about-us', [PageController::class, 'aboutUs'])->name('about-us');

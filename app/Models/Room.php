@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 
@@ -64,6 +65,11 @@ class Room extends Model
             ->withPivot('description')
             ->using(AmenityRoom::class)
             ->withTimestamps();
+    }
+
+    public function allocation(): HasOne
+    {
+        return $this->hasOne(Allocation::class);
     }
 
     public function toSearchableArray()

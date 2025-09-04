@@ -46,7 +46,7 @@ class BookingControllerTest extends TestCase
                 ->component('backoffice/booking/ShowPage')
                 ->has('currentBuilding')
                 ->has('buildings', 2)
-                ->has('rooms.data', 2)
+                ->has('bookings.data', 2)
                 ->has('params')
         );
     }

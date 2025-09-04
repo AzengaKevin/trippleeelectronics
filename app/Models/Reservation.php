@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Reservation extends Model
@@ -46,20 +47,20 @@ class Reservation extends Model
             ->append($now->format('d'))
             ->value();
 
-        $lastOrder = Order::query()->withTrashed()->where('reference', 'like', $prefix.'%')
+        $lastReservation = Reservation::query()->withTrashed()->where('reference', 'like', $prefix.'%')
             ->orderByDesc('reference')
             ->first();
 
-        if ($lastOrder) {
-            $lastNumber = (int) substr($lastOrder->reference, -3);
+        if ($lastReservation) {
+            $lastNumber = (int) substr($lastReservation->reference, -3);
             $nextNumber = $lastNumber + 1;
         } else {
             $nextNumber = 1;
         }
 
-        $orderCount = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        $reservationCount = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
-        return $prefix.$orderCount;
+        return $prefix.$reservationCount;
     }
 
     public function property(): BelongsTo
@@ -83,5 +84,10 @@ class Reservation extends Model
             ->using(IndividualReservation::class)
             ->withTimestamps()
             ->withPivot('role');
+    }
+
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(Allocation::class);
     }
 }
