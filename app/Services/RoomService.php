@@ -11,6 +11,7 @@ class RoomService
 {
     public function get(
         ?string $query = null,
+        ?Building $building = null,
         ?array $with = null,
         ?array $withCount = null,
         ?int $limit = null,
@@ -19,11 +20,12 @@ class RoomService
         ?string $orderDirection = 'asc',
     ) {
 
-        $roomQuery = Room::search($query, function ($defaultQuery) use ($with, $withCount, $limit) {
+        $roomQuery = Room::search($query, function ($defaultQuery) use ($with, $withCount, $limit, $building) {
 
             $defaultQuery->when($with, fn ($q) => $q->with($with))
                 ->when($withCount, fn ($q) => $q->withCount($withCount))
-                ->when($limit, fn ($q) => $q->take($limit));
+                ->when($limit, fn ($q) => $q->take($limit))
+                ->when($building, fn ($q) => $q->whereHas('building', fn ($q) => $q->where('buildings.id', $building->id)));
         });
 
         $roomQuery->orderBy($orderBy, $orderDirection);

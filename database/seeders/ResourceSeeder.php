@@ -462,6 +462,17 @@ class ResourceSeeder extends Seeder
                     'required_permission' => 'browse-rooms',
                     'morph_class' => 'room',
                 ],
+                [
+                    'name' => 'Bookings',
+                    'route_name' => 'backoffice.booking.show',
+                    'icon' => 'calendar-check',
+                    'order' => 42,
+                    'description' => 'Manage booking records',
+                    'is_active' => true,
+                    'count' => 0,
+                    'required_permission' => 'access-booking',
+                    'morph_class' => null,
+                ],
             ]
         )->each(function ($item, $index) {
 
