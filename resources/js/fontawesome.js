@@ -10,6 +10,7 @@ import {
     faBoxes,
     faBriefcase,
     faBuilding,
+    faCalendar,
     faCalendarCheck,
     faCartPlus,
     faCashRegister,
@@ -179,3 +180,4 @@ library.add(faMoneyBill);
 library.add(faFileInvoiceDollar);
 library.add(faDoorOpen);
 library.add(faCalendarCheck);
+library.add(faCalendar);

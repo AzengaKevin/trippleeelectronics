@@ -1,6 +1,7 @@
 <script setup>
 import BackofficeLayout from '@/layouts/BackofficeLayout.vue';
-import { Head, router } from '@inertiajs/vue3';
+import AppPagination from '@/components/AppPagination.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
 import { reactive, watch } from 'vue';
 
@@ -13,7 +14,7 @@ const props = defineProps({
         type: Array,
         required: true,
     },
-    rooms: {
+    bookings: {
         type: Object,
         required: true,
     },
@@ -49,6 +50,7 @@ watch(
 </script>
 
 <template>
+
     <Head>
         <title>Booking</title>
     </Head>
@@ -63,19 +65,22 @@ watch(
                             <label class="label">
                                 <span class="label-text">Date</span>
                             </label>
-                            <input type="date" class="input input-bordered w-full" v-model="filters.from" placeholder="From" />
+                            <input type="date" class="input input-bordered w-full" v-model="filters.from"
+                                placeholder="From" />
                         </div>
                         <div class="space-y-2">
                             <label class="label">
                                 <span class="label-text">Name</span>
                             </label>
-                            <input type="text" class="input input-bordered w-full" placeholder="Name" v-model="filters.query" />
+                            <input type="text" class="input input-bordered w-full" placeholder="Name"
+                                v-model="filters.query" />
                         </div>
                         <hr />
                         <div class="flex flex-wrap gap-3">
-                            <Link :href="route('backoffice.booking.show')" class="btn btn-sm btn-primary btn-outline rounded-full">
-                                <font-awesome-icon icon="times" />
-                                Reset
+                            <Link :href="route('backoffice.booking.show')"
+                                class="btn btn-sm btn-primary btn-outline rounded-full">
+                            <font-awesome-icon icon="times" />
+                            Reset
                             </Link>
                         </div>
                     </div>
@@ -88,9 +93,10 @@ watch(
                         <div class="overflow-x-auto pb-48">
                             <table class="table-lg table">
                                 <thead>
-                                    <tr>
+                                    <tr class="uppercase">
                                         <th>#</th>
                                         <th>Room</th>
+                                        <th>Booked</th>
                                         <th>Period</th>
                                         <th>Author</th>
                                         <th>Customer</th>
@@ -100,30 +106,38 @@ watch(
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template v-if="props.rooms.data.length">
-                                        <tr v-for="(room, index) in props.rooms.data" :key="room.id">
-                                            <td>{{ index + props.rooms.from }}</td>
-                                            <td>{{ room.name }}</td>
+                                    <template v-if="props.bookings.data.length">
+                                        <tr v-for="(booking, index) in props.bookings.data" :key="booking.id">
+                                            <td>{{ index + props.bookings.from }}</td>
+                                            <td class="uppercase">{{ booking.name }}</td>
                                             <td>-</td>
-                                            <td>-</td>
-                                            <td>-</td>
+                                            <td>
+                                                <span v-if="booking.period_days && booking.period_days > 0">{{ booking.period_days }} days</span>
+                                                <span v-else-if="booking.period_hours && booking.period_hours > 0">{{ booking.period_hours }} hours</span>
+                                                <span v-if="!booking.period_days && !booking.period_hours">-</span>
+                                            </td>
+                                            <td>{{ booking.allocation?.reservation?.author?.name ?? '-' }}</td>
+                                            <td>{{ booking.allocation?.reservation?.primary_individual?.name ?? '-' }}</td>
                                             <td>-</td>
                                             <td>-</td>
                                             <td>
-                                                <button class="btn btn-sm btn-primary">Book</button>
+                                                <button class="btn btn-sm btn-primary">
+                                                    <font-awesome-icon icon="calendar" />
+                                                    Book
+                                                </button>
                                             </td>
                                         </tr>
                                     </template>
                                     <template v-else>
                                         <tr>
-                                            <td colspan="10" class="text-center">No orders found.</td>
+                                            <td colspan="9" class="text-center">No bookings found.</td>
                                         </tr>
                                     </template>
                                 </tbody>
                             </table>
                         </div>
 
-                        <app-pagination :resource="props.orders" />
+                        <app-pagination :resource="props.bookings" />
                     </div>
                 </div>
             </div>
