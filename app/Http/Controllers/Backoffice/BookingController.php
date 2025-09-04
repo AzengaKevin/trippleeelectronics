@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backoffice;
 
 use App\Http\Controllers\Controller;
 use App\Models\Building;
+use App\Services\BookingService;
 use App\Services\BuildingService;
 use App\Services\PropertyService;
 use App\Services\RoomService;
@@ -19,6 +20,7 @@ class BookingController extends Controller
         private readonly RoomService $roomService,
         private readonly PropertyService $propertyService,
         private readonly BuildingService $buildingService,
+        private readonly BookingService $bookingService,
     ) {
         $this->currentBuilding = Building::query()->first();
     }
@@ -29,12 +31,12 @@ class BookingController extends Controller
 
         $buildings = $this->buildingService->get(perPage: null);
 
-        $rooms = $this->roomService->get(...$params, building: $this->currentBuilding);
+        $bookings = $this->bookingService->get(...$params, building: $this->currentBuilding, with: ['allocation.reservation.author', 'allocation.reservation.primaryIndividual']);
 
         return Inertia::render('backoffice/booking/ShowPage', [
             'currentBuilding' => $this->currentBuilding,
             'buildings' => $buildings,
-            'rooms' => $rooms,
+            'bookings' => $bookings,
             'params' => $params,
         ]);
     }
