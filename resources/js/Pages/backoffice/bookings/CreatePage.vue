@@ -2,7 +2,6 @@
 import AppCombobox from '@/components/AppCombobox.vue';
 import useAutologout from '@/composables/useAutologout';
 import useLogout from '@/composables/useLogout';
-import usePrice from '@/composables/usePrice';
 import useProducts from '@/composables/useProducts';
 import useSwal from '@/composables/useSwal';
 
@@ -71,32 +70,48 @@ const bottomHeight = ref(0);
 
 const itemsElement = ref(null);
 
-const occupiedHeight = computed(() => navbarHeight.value + titleHeight.value + topbarHeight.value + bottomHeight.value + 40);
+const occupiedHeight = computed(() => navbarHeight.value + titleHeight.value + topbarHeight.value + bottomHeight.value + 48);
 
 const appName = import.meta.env.VITE_APP_NAME;
 
+const guestBlueprint = {
+    client: null,
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    id_number: '',
+};
+
+const allocationBlueprint = {
+    room: null,
+    start: '',
+    end: '',
+    occupancy: 1,
+    price: 0,
+    discount: 0,
+    amount: 0,
+};
+
+const addGuest = () => {
+    form.guests.push({ ...guestBlueprint });
+};
+
+const removeGuest = (index) => {
+    form.guests.splice(index, 1);
+};
+
+const addAllocation = () => {
+    form.allocations.push({ ...allocationBlueprint });
+};
+
+const removeAAllocation = (index) => {
+    form.allocations.splice(index, 1);
+};
+
 const form = useForm({
-    guests: [
-        {
-            client: null,
-            name: '',
-            email: '',
-            phone: '',
-            address: '',
-            id_number: '',
-        },
-    ],
-    allocations: [
-        {
-            room: null,
-            start: '',
-            end: '',
-            occupancy: 1,
-            price: 0,
-            discount: 0,
-            amount: 0,
-        },
-    ],
+    guests: [{ ...guestBlueprint }],
+    allocations: [{ ...allocationBlueprint }],
     total_price: 0,
     checkin_date: '',
     checkout_date: '',
@@ -120,8 +135,6 @@ const closeStayLoggedInDialog = () => {
 const { logout } = useLogout();
 
 const { showFeedbackSwal } = useSwal();
-
-const { formatPrice } = usePrice();
 
 const { loadProducts } = useProducts();
 
@@ -292,11 +305,11 @@ const reference = ref(props.params?.reference);
                     </div>
                 </div>
 
-                <form novalidate @submit.prevent="submit" class="flex max-h-full grow flex-col gap-2">
-                    <div ref="itemsElement" class="grow">
-                        <div class="grid grid-cols-12 gap-4">
-                            <div class="col-span-12 lg:col-span-6">
-                                <div class="card bg-blue-500">
+                <form novalidate @submit.prevent="submit" class="flex max-h-full grow flex-col gap-4">
+                    <div ref="itemsElement" class="scrollbar-thin grow overflow-y-auto">
+                        <div class="grid h-full grid-cols-12 gap-4">
+                            <div class="col-span-12 h-full lg:col-span-6">
+                                <div class="card h-full bg-blue-500">
                                     <div class="card-body p-1">
                                         <div class="card-title">GUESTS</div>
                                         <div class="relative overflow-x-auto pb-48">
@@ -356,7 +369,7 @@ const reference = ref(props.params?.reference);
                                                                 />
                                                             </td>
                                                             <td>
-                                                                <button type="button" class="btn btn-xs btn-square btn-error">
+                                                                <button type="button" @click="removeGuest(index)" class="btn btn-xs btn-square btn-error">
                                                                     <font-awesome-icon icon="trash" size="sm" />
                                                                 </button>
                                                             </td>
@@ -364,14 +377,14 @@ const reference = ref(props.params?.reference);
                                                     </template>
                                                     <template v-else>
                                                         <tr>
-                                                            <td colspan="9" class="text-center">No items in the order</td>
+                                                            <td colspan="9" class="text-center">No guests added yet</td>
                                                         </tr>
                                                     </template>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="9">
-                                                            <button type="button" @click="addItem" class="btn btn-xs btn-light">Add Item</button>
+                                                            <button type="button" @click="addGuest" class="btn btn-xs btn-light">Add Guest</button>
                                                         </td>
                                                     </tr>
                                                 </tfoot>
@@ -381,8 +394,8 @@ const reference = ref(props.params?.reference);
                                 </div>
                             </div>
 
-                            <div class="col-span-12 lg:col-span-6">
-                                <div class="card bg-blue-500">
+                            <div class="col-span-12 h-full lg:col-span-6">
+                                <div class="card h-full bg-blue-500">
                                     <div class="card-body p-1">
                                         <div class="card-title">ALLOCATIONS</div>
                                         <div class="relative overflow-x-auto pb-48">
@@ -443,7 +456,7 @@ const reference = ref(props.params?.reference);
                                                                 />
                                                             </td>
                                                             <td>
-                                                                <button type="button" class="btn btn-xs btn-square btn-error">
+                                                                <button type="button" @click="removeAllocation(index)" class="btn btn-xs btn-square btn-error">
                                                                     <font-awesome-icon icon="trash" size="sm" />
                                                                 </button>
                                                             </td>
@@ -451,14 +464,16 @@ const reference = ref(props.params?.reference);
                                                     </template>
                                                     <template v-else>
                                                         <tr>
-                                                            <td colspan="9" class="text-center">No items in the order</td>
+                                                            <td colspan="9" class="text-center">No allocations added yet</td>
                                                         </tr>
                                                     </template>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="9">
-                                                            <button type="button" @click="addItem" class="btn btn-xs btn-light">Add Item</button>
+                                                            <button type="button" @click="addAllocation" class="btn btn-xs btn-light">
+                                                                Add Allocation
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 </tfoot>
@@ -470,7 +485,7 @@ const reference = ref(props.params?.reference);
                         </div>
                     </div>
 
-                    <div ref="bottomElement" class="grid grid-cols-12 gap-2">
+                    <div ref="bottomElement" class="grid grid-cols-12 gap-4">
                         <div class="col-span-12 md:col-span-4">
                             <div class="card bg-[#00ff01] shadow">
                                 <div class="card-body space-y-2 p-1 pb-4">
@@ -595,11 +610,35 @@ const reference = ref(props.params?.reference);
                                 <div class="card-body space-y-2 p-1">
                                     <div class="grid grid-cols-5 gap-2">
                                         <a
-                                            :href="route('backoffice.pos')"
+                                            :href="'#'"
                                             class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
                                         >
                                             <span class="font-bold uppercase">New</span>
                                         </a>
+                                        <button
+                                            type="submit"
+                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
+                                        >
+                                            <span class="font-bold uppercase">Save</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
+                                        >
+                                            <span class="font-bold uppercase">Hold</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
+                                        >
+                                            <span class="font-bold uppercase">Print</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
+                                        >
+                                            <span class="font-bold uppercase">Cancel</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
