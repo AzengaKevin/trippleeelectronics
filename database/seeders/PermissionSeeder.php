@@ -244,7 +244,12 @@ class PermissionSeeder extends Seeder
             'update-rooms',
             'delete-rooms',
             'export-rooms',
-            'access-booking',
+            'browse-bookings',
+            'create-bookings',
+            'import-bookings',
+            'update-bookings',
+            'delete-bookings',
+            'export-bookings',
         ])->each(fn ($name) => Permission::query()->updateOrCreate(compact('name')));
     }
 }

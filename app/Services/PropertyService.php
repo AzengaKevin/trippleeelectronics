@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Property;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class PropertyService
@@ -76,5 +77,10 @@ class PropertyService
         ];
 
         return Property::query()->create($attributes);
+    }
+
+    public function fetchUserProperty(User $user): ?Property
+    {
+        return $user->properties()->first();
     }
 }

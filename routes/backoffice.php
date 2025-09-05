@@ -49,4 +49,4 @@ Route::prefix('accounting')->as('accounting.')->group(base_path('routes/backoffi
 Route::prefix('taxes')->as('taxes.')->group(base_path('routes/backoffice/taxes.php'));
 Route::prefix('buildings')->as('buildings.')->group(base_path('routes/backoffice/buildings.php'));
 Route::prefix('rooms')->as('rooms.')->group(base_path('routes/backoffice/rooms.php'));
-Route::prefix('booking')->as('booking.')->group(base_path('routes/backoffice/booking.php'));
+Route::prefix('bookings')->as('bookings.')->group(base_path('routes/backoffice/bookings.php'));

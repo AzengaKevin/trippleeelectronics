@@ -1,16 +1,18 @@
 <script setup>
 import BackofficeLayout from '@/layouts/BackofficeLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { reactive, ref, watch } from 'vue';
+import GuestAndRoomsStep from '@/Pages/backoffice/bookings/steps/GuestAndRoomsStep.vue';
+import PrimaryGuestStep from '@/Pages/backoffice/bookings/steps/PrimaryGuestStep.vue';
+import ReviewStep from '@/Pages/backoffice/bookings/steps/ReviewStep.vue';
+import StayDetailsStep from '@/Pages/backoffice/bookings/steps/StayDetailsStep.vue';
+import { Head, router } from '@inertiajs/vue3';
+import { useLocalStorage } from '@vueuse/core';
+import { computed, markRaw, ref } from 'vue';
+
+const NEW_BOOKING_DETAILS_KEY = 'new-booking-details';
 
 const props = defineProps({
-    auth: {
-        type: Object,
-        required: true,
-    },
     feedback: {
         type: Object,
-        required: false,
         default: null,
     },
 });
@@ -18,155 +20,150 @@ const props = defineProps({
 const breadcrumbs = [
     { title: 'Dashboard', href: route('backoffice.dashboard') },
     { title: 'Bookings', href: route('backoffice.bookings.index') },
-    { title: 'New', href: null },
+    { title: 'New Booking', href: null },
 ];
 
-
-
-const step = ref(1)
-
-const form = reactive({
-    guest: {
-        name: "",
-        email: "",
-        phone: "",
+const steps = [
+    {
+        id: 1,
+        label: 'Primary Guest Information',
+        icon: 'fa-solid fa-user',
+        component: markRaw(PrimaryGuestStep),
     },
-    stay: {
-        checkIn: "",
-        checkOut: "",
+    {
+        id: 2,
+        label: 'Stay Details',
+        icon: 'fa-solid fa-bed',
+        component: markRaw(StayDetailsStep),
+    },
+    {
+        id: 3,
+        label: 'Guests & Rooms',
+        icon: 'fa-solid fa-user-group',
+        component: markRaw(GuestAndRoomsStep),
+    },
+    {
+        id: 4,
+        label: 'Review',
+        icon: 'fa-solid fa-square-check',
+        component: markRaw(ReviewStep),
+    },
+];
+
+const currentStep = ref(steps[0]);
+
+const state = useLocalStorage(
+    NEW_BOOKING_DETAILS_KEY,
+    {
+        multiple: false,
+        primary_guest: {
+            client: null,
+            email: '',
+            phone: '',
+            address: '',
+            kra_pin: '',
+            type: '',
+        },
+        checkin_date: '',
+        checkout_date: '',
+        adults: 1,
+        children: 0,
+        infants: 0,
         rooms: 1,
+        guest_rooms: [
+            {
+                client: null,
+                email: '',
+                phone: '',
+                address: '',
+                kra_pin: '',
+                room: null,
+            },
+        ],
     },
-    rooms: [],
-})
+    { mergeDefaults: true },
+);
+
+const percentageProgress = computed(() => {
+    return Math.round((currentStep.value.id / steps.length) * 100);
+});
 
 const nextStep = () => {
-    if (step.value < 4) step.value++
-}
+    const currentStepId = currentStep.value.id;
 
-const prevStep = () => {
-    if (step.value > 1) step.value--
-}
+    const nextStepId = currentStepId + 1;
 
-const generateRooms = () => {
-    form.rooms = []
-    for (let i = 0; i < form.stay.rooms; i++) {
-        form.rooms.push({
-            guestCount: 1,
-            guestNames: "",
-        })
-    }
-    nextStep()
-}
+    const maybeNextStep = steps.find((step) => step.id === nextStepId);
 
+    if (maybeNextStep) currentStep.value = maybeNextStep;
+};
+
+const previousStep = () => {
+    const currentStepId = currentStep.value.id;
+
+    const previousStepId = currentStepId - 1;
+
+    const maybePreviousStep = steps.find((step) => step.id === previousStepId);
+
+    if (maybePreviousStep) currentStep.value = maybePreviousStep;
+};
+
+const updateState = (value) => {
+    state.value = {
+        ...state.value,
+        ...value,
+    };
+};
+
+const submitProperty = () => {
+    router.post(
+        route('properties.store'),
+        {
+            ...state.value,
+            location_name: state.value.location_name?.label,
+        },
+        {
+            preserveScroll: true,
+            preserveState: true,
+            onError: (errors) => {
+                console.log(errors);
+
+                // Set the error on a global property that can be user
+            },
+        },
+    );
+};
 </script>
-
 <template>
-
     <Head>
         <title>New Booking</title>
     </Head>
-    <BackofficeLayout :breadcrumbs="breadcrumbs" title="New Booking">
 
-        <div class="card">
-            <div class="card-body">
+    <BackofficeLayout title="New Booking" :breadcrumbs="breadcrumbs">
+        <div class="mx-auto max-w-7xl">
+            <div class="flex flex-col gap-4">
+                <ul class="steps">
+                    <li v-for="step in steps" :key="step.id" :class="['step', { 'step-primary': step.id <= currentStep.id }]">
+                        <div class="text-primary flex flex-col gap-2 p-3">
+                            <font-awesome-icon :icon="step.icon" size="xl" />
+                            <span class="font-semibold uppercase">{{ step.label }}</span>
+                        </div>
+                    </li>
+                </ul>
 
-                <div class="p-6 bg-base-100 rounded-2xl shadow-xl">
-                    <!-- Progress Steps -->
-                    <ul class="steps w-full mb-6">
-                        <li class="step" :class="{ 'step-primary': step >= 1 }">Guest Info</li>
-                        <li class="step" :class="{ 'step-primary': step >= 2 }">Stay Details</li>
-                        <li class="step" :class="{ 'step-primary': step >= 3 }">Rooms & Guests</li>
-                        <li class="step" :class="{ 'step-primary': step >= 4 }">Confirm</li>
-                    </ul>
+                <progress class="progress-bar progress-accent w-full" :value="percentageProgress" max="100"></progress>
 
-                    <!-- Step 1 -->
-                    <div v-if="step === 1" class="step-card">
-                        <h2 class="text-xl font-bold mb-4">👤 Guest Information</h2>
-                        <div class="form-control mb-4">
-                            <label class="label">Full Name</label>
-                            <input v-model="form.guest.name" type="text" placeholder="John Doe"
-                                class="input input-bordered" />
-                        </div>
-                        <div class="form-control mb-4">
-                            <label class="label">Email</label>
-                            <input v-model="form.guest.email" type="email" placeholder="john@example.com"
-                                class="input input-bordered" />
-                        </div>
-                        <div class="form-control mb-4">
-                            <label class="label">Phone</label>
-                            <input v-model="form.guest.phone" type="tel" placeholder="+254 712 345 678"
-                                class="input input-bordered" />
-                        </div>
-                        <button @click="nextStep" class="btn btn-primary">Next</button>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div v-if="step === 2" class="step-card">
-                        <h2 class="text-xl font-bold mb-4">📅 Stay Details</h2>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="form-control">
-                                <label class="label">Check-in</label>
-                                <input v-model="form.stay.checkIn" type="date" class="input input-bordered" />
-                            </div>
-                            <div class="form-control">
-                                <label class="label">Check-out</label>
-                                <input v-model="form.stay.checkOut" type="date" class="input input-bordered" />
-                            </div>
-                        </div>
-                        <div class="form-control mt-4">
-                            <label class="label">Number of Rooms</label>
-                            <input v-model.number="form.stay.rooms" type="number" min="1"
-                                class="input input-bordered" />
-                        </div>
-                        <div class="flex justify-between mt-6">
-                            <button @click="prevStep" class="btn btn-ghost">Back</button>
-                            <button @click="generateRooms" class="btn btn-primary">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div v-if="step === 3" class="step-card">
-                        <h2 class="text-xl font-bold mb-4">🛏️ Rooms & Guests</h2>
-                        <div v-for="(room, index) in form.rooms" :key="index" class="card bg-base-100 shadow p-4 mb-4">
-                            <h3 class="font-bold mb-2">Room {{ index + 1 }}</h3>
-                            <div class="form-control mb-2">
-                                <label class="label">Number of Guests</label>
-                                <input v-model.number="room.guestCount" type="number" min="1"
-                                    class="input input-bordered" />
-                            </div>
-                            <div class="form-control">
-                                <label class="label">Guest Names</label>
-                                <textarea v-model="room.guestNames" class="textarea textarea-bordered"
-                                    placeholder="Enter guest names"></textarea>
-                            </div>
-                        </div>
-                        <div class="flex justify-between mt-6">
-                            <button @click="prevStep" class="btn btn-ghost">Back</button>
-                            <button @click="nextStep" class="btn btn-primary">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 4 -->
-                    <div v-if="step === 4" class="step-card">
-                        <h2 class="text-xl font-bold mb-4">✅ Review & Confirm</h2>
-                        <div class="p-4 border rounded-lg bg-base-200 space-y-2">
-                            <p><strong>Guest:</strong> {{ form.guest.name }} ({{ form.guest.email }})</p>
-                            <p><strong>Phone:</strong> {{ form.guest.phone }}</p>
-                            <p><strong>Stay:</strong> {{ form.stay.checkIn }} → {{ form.stay.checkOut }}</p>
-                            <p><strong>Rooms:</strong> {{ form.stay.rooms }}</p>
-                            <ul class="list-disc list-inside">
-                                <li v-for="(room, index) in form.rooms" :key="index">
-                                    Room {{ index + 1 }}: {{ room.guestCount }} guests – {{ room.guestNames }}
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="flex justify-between mt-6">
-                            <button @click="prevStep" class="btn btn-ghost">Back</button>
-                            <button class="btn btn-success">Confirm Reservation</button>
-                        </div>
-                    </div>
+                <div>
+                    <component
+                        v-if="currentStep"
+                        :is="currentStep.component"
+                        :state="state"
+                        :previousStep="previousStep"
+                        :nextStep="nextStep"
+                        @update-state="updateState"
+                        :submitProperty="submitProperty"
+                    />
                 </div>
-
             </div>
         </div>
     </BackofficeLayout>

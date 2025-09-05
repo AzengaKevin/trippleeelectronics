@@ -168,19 +168,6 @@ const handleBuyNow = (product) => {
 
                     <p class="mb-6">{{ product.description }}</p>
 
-                    <button class="btn btn-link" onclick="summary.showModal()">Read More</button>
-
-                    <dialog id="summary" class="modal">
-                        <div class="modal-box w-11/12 max-w-5xl">
-                            <form method="dialog">
-                                <button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2">✕</button>
-                            </form>
-                            <h3 class="text-lg font-bold">Product Summary</h3>
-                            <hr class="my-6" />
-                            <div v-html="product.more_description" />
-                        </div>
-                    </dialog>
-
                     <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-6 text-sm">
                         <button
                             type="button"
