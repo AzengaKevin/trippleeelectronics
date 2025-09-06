@@ -5,6 +5,7 @@ import {
     faArrowLeftLong,
     faBan,
     faBars,
+    faBed,
     faBell,
     faBox,
     faBoxes,
@@ -66,6 +67,7 @@ import {
     faSignOut,
     faSitemap,
     faSmile,
+    faSquareCheck,
     faStore,
     faSync,
     faTable,
@@ -81,6 +83,7 @@ import {
     faUpload,
     faUser,
     faUserCog,
+    faUserGroup,
     faUserPlus,
     faUsers,
     faUsersCog,
@@ -181,3 +184,6 @@ library.add(faFileInvoiceDollar);
 library.add(faDoorOpen);
 library.add(faCalendarCheck);
 library.add(faCalendar);
+library.add(faBed);
+library.add(faUserGroup);
+library.add(faSquareCheck);

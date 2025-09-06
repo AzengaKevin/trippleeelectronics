@@ -35,9 +35,10 @@ class ReservationTest extends TestCase
             'status' => $this->faker->randomElement(ReservationStatus::options()),
             'checkin_date' => $this->faker->date(),
             'checkout_date' => $this->faker->date(),
-            'adults' => $this->faker->numberBetween(1, 5),
-            'children' => $this->faker->numberBetween(0, 5),
-            'infants' => $this->faker->numberBetween(0, 5),
+            'guests_count' => $this->faker->numberBetween(1, 5),
+            'rooms_count' => $this->faker->numberBetween(0, 5),
+            'tendered_amount' => $this->faker->randomFloat(2, 1000, 5000),
+            'balance_amount' => $this->faker->randomFloat(2, 100, 999),
         ];
 
         $reservation = Reservation::query()->create($attributes);
@@ -56,9 +57,10 @@ class ReservationTest extends TestCase
             'status' => $attributes['status'],
             'checkin_date' => $attributes['checkin_date'],
             'checkout_date' => $attributes['checkout_date'],
-            'adults' => $attributes['adults'],
-            'children' => $attributes['children'],
-            'infants' => $attributes['infants'],
+            'guests_count' => $attributes['guests_count'],
+            'rooms_count' => $attributes['rooms_count'],
+            'tendered_amount' => $attributes['tendered_amount'],
+            'balance_amount' => $attributes['balance_amount'],
         ]);
     }
 
@@ -80,9 +82,10 @@ class ReservationTest extends TestCase
             'status' => $reservation->status,
             'checkin_date' => $reservation->checkin_date,
             'checkout_date' => $reservation->checkout_date,
-            'adults' => $reservation->adults,
-            'children' => $reservation->children,
-            'infants' => $reservation->infants,
+            'guests_count' => $reservation->guests_count,
+            'rooms_count' => $reservation->rooms_count,
+            'tendered_amount' => $reservation->tendered_amount,
+            'balance_amount' => $reservation->balance_amount,
         ]);
     }
 

@@ -23,9 +23,10 @@ class Reservation extends Model
         'status',
         'checkin_date',
         'checkout_date',
-        'adults',
-        'children',
-        'infants',
+        'guests_count',
+        'rooms_count',
+        'tendered_amount',
+        'balance_amount',
     ];
 
     protected static function boot()

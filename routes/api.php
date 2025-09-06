@@ -31,4 +31,6 @@ Route::as('api.')->group(function () {
     Route::any('/mpesa/timeout', [MpesaController::class, 'timeout'])->name('mpesa.timeout');
     Route::any('/mpesa/result', [MpesaController::class, 'result'])->name('mpesa.result');
     Route::any('/mpesa/callback', [MpesaController::class, 'callback'])->name('mpesa.callback');
+
+    Route::prefix('rooms')->as('rooms.')->group(base_path('routes/api/rooms.php'));
 });

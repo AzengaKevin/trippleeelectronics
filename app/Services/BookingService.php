@@ -43,22 +43,39 @@ class BookingService
                     ->select('id')
                     ->whereColumn('allocations.room_id', 'rooms.id')
                     ->when($date, function ($query, $date) {
-                        return $query->whereDate('allocations.date', '=', $date)
-                            ->orWhere(function ($query) use ($date) {
-                                $query->whereDate('allocations.start', '>', $date)
-                                    ->whereDate('allocations.end', '<=', $date);
-                            });
+                        $query->where(function ($query) use ($date) {
+                            $query->whereDate('allocations.date', '=', $date)
+                                ->orWhere(function ($query) use ($date) {
+                                    $query->whereDate('allocations.start', '<=', $date)->whereDate('allocations.end', '>=', $date);
+                                });
+                        });
                     })
                     ->orderBy('allocations.created_at', 'desc')
                     ->limit(1),
                 'period_days' => Allocation::query()
                     ->select(DB::raw($daysPeriodQuery))
                     ->whereColumn('allocations.room_id', 'rooms.id')
+                    ->when($date, function ($query, $date) {
+                        $query->where(function ($query) use ($date) {
+                            $query->whereDate('allocations.date', '=', $date)
+                                ->orWhere(function ($query) use ($date) {
+                                    $query->whereDate('allocations.start', '<=', $date)->whereDate('allocations.end', '>=', $date);
+                                });
+                        });
+                    })
                     ->orderBy('allocations.created_at', 'desc')
                     ->limit(1),
                 'period_hours' => Allocation::query()
                     ->select(DB::raw($hoursPeriodQuery))
                     ->whereColumn('allocations.room_id', 'rooms.id')
+                    ->when($date, function ($query, $date) {
+                        $query->where(function ($query) use ($date) {
+                            $query->whereDate('allocations.date', '=', $date)
+                                ->orWhere(function ($query) use ($date) {
+                                    $query->whereDate('allocations.start', '<=', $date)->whereDate('allocations.end', '>=', $date);
+                                });
+                        });
+                    })
                     ->orderBy('allocations.created_at', 'desc')
                     ->limit(1),
             ])

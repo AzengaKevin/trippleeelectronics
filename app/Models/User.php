@@ -70,6 +70,11 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->belongsToMany(Store::class)->using(StoreUser::class)->withTimestamps();
     }
 
+    public function properties(): BelongsToMany
+    {
+        return $this->belongsToMany(Property::class)->using(PropertyUser::class)->withTimestamps();
+    }
+
     public function messages()
     {
         return $this->hasMany(Message::class);

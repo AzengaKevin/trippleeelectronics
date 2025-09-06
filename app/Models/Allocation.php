@@ -19,7 +19,7 @@ class Allocation extends Model
         'date',
         'start',
         'end',
-        'occupancy',
+        'occupants',
         'status',
     ];
 

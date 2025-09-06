@@ -27,7 +27,7 @@ trait RedirectWithFeedback
 
             activity()->log($throwable->getMessage());
 
-            if (app()->environment('testing')) {
+            if (app()->environment('testing', 'local')) {
 
                 Log::error($throwable->getMessage());
             }
