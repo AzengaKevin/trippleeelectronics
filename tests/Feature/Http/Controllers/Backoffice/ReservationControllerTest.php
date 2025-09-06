@@ -29,13 +29,31 @@ class ReservationControllerTest extends TestCase
             'create-reservations',
             'update-reservations',
             'delete-reservations',
-            'browse-bookings',
-            'create-bookings',
-            'import-bookings',
-            'update-bookings',
-            'delete-bookings',
-            'export-bookings',
+            'import-reservations',
+            'export-reservations',
         ]);
+    }
+
+    public function test_backoffice_reservations_index_route(): void
+    {
+        $this->withoutExceptionHandling();
+
+        Reservation::factory()->count(2)->create();
+
+        $response = $this->actingAs($this->user)->get(route('backoffice.reservations.index'));
+
+        $response->assertOk();
+
+        $response->assertInertia(fn ($page) => $page->component('backoffice/reservations/IndexPage')->has('reservations.data', 2)->has('params'));
+    }
+
+    public function test_backoffice_reservations_create_route(): void
+    {
+        $response = $this->actingAs($this->user)->get(route('backoffice.reservations.create'));
+
+        $response->assertOk();
+
+        $response->assertInertia(fn ($page) => $page->component('backoffice/reservations/CreatePage'));
     }
 
     public function test_backoffice_reservations_store_route(): void
@@ -101,5 +119,19 @@ class ReservationControllerTest extends TestCase
         $this->assertEquals($reservation->allocations()->count(), count(data_get($payload, 'allocations')));
 
         $response->assertRedirect();
+    }
+
+    public function test_backoffice_reservations_show_route(): void
+    {
+        $this->withoutExceptionHandling();
+
+        /** @var Reservation $reservation */
+        $reservation = Reservation::factory()->create();
+
+        $response = $this->actingAs($this->user)->get(route('backoffice.reservations.show', $reservation));
+
+        $response->assertOk();
+
+        $response->assertInertia(fn ($page) => $page->component('backoffice/reservations/ShowPage')->has('reservation'));
     }
 }

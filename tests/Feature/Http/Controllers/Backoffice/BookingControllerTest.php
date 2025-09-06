@@ -25,11 +25,6 @@ class BookingControllerTest extends TestCase
             permissions: [
                 'access-backoffice',
                 'browse-bookings',
-                'create-bookings',
-                'import-bookings',
-                'update-bookings',
-                'delete-bookings',
-                'export-bookings',
             ]
         );
     }
@@ -42,35 +37,17 @@ class BookingControllerTest extends TestCase
 
         $buildings->map(fn (Building $building) => Room::factory()->for($building)->count(2)->create());
 
-        $response = $this->actingAs($this->user)->get(route('backoffice.bookings.index'));
+        $response = $this->actingAs($this->user)->get(route('backoffice.bookings.show'));
 
         $response->assertOk();
 
         $response->assertInertia(
             fn ($page) => $page
-                ->component('backoffice/bookings/IndexPage')
+                ->component('backoffice/bookings/ShowPage')
                 ->has('currentBuilding')
                 ->has('buildings', 2)
-                ->has('bookings.data', 2)
+                ->has('bookings.data')
                 ->has('params')
-        );
-    }
-
-    public function test_backoffice_bookings_create_route(): void
-    {
-        $this->withoutExceptionHandling();
-
-        $buildings = Building::factory()->for(Property::factory())->count(2)->create();
-
-        $buildings->map(fn (Building $building) => Room::factory()->for($building)->count(2)->create());
-
-        $response = $this->actingAs($this->user)->get(route('backoffice.bookings.create'));
-
-        $response->assertOk();
-
-        $response->assertInertia(
-            fn ($page) => $page
-                ->component('backoffice/bookings/CreatePage')
         );
     }
 }
