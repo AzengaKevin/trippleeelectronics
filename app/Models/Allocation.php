@@ -19,8 +19,16 @@ class Allocation extends Model
         'date',
         'start',
         'end',
+        'price',
         'occupants',
         'status',
+    ];
+
+    protected $casts = [
+        'date' => 'date',
+        'start' => 'datetime',
+        'end' => 'datetime',
+        'price' => 'float',
     ];
 
     public function reservation(): BelongsTo

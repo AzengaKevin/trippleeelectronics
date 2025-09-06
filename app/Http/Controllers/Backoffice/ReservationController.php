@@ -64,7 +64,7 @@ class ReservationController extends Controller
 
     public function show(Reservation $reservation)
     {
-        $reservation->load(['author', 'primaryIndividual']);
+        $reservation->load(['author', 'primaryIndividual', 'individuals', 'allocations.room', 'allocations.roomType']);
 
         return Inertia::render('backoffice/reservations/ShowPage', [
             'reservation' => $reservation,

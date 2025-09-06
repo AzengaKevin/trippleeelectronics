@@ -35,7 +35,7 @@ class Room extends Model
             'occupancy' => 'integer',
             'active' => 'boolean',
             'status' => RoomStatus::class,
-            'price' => 'decimal:2',
+            'price' => 'float',
         ];
     }
 
