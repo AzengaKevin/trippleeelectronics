@@ -22,9 +22,10 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->date('checkin_date')->nullable();
             $table->date('checkout_date')->nullable();
-            $table->integer('adults')->nullable();
-            $table->integer('children')->nullable();
-            $table->integer('infants')->nullable();
+            $table->integer('guests_count')->nullable();
+            $table->integer('rooms_count')->nullable();
+            $table->decimal('tendered_amount', 10, 2)->nullable();
+            $table->decimal('balance_amount', 10, 2)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

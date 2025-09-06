@@ -13,9 +13,10 @@ class ReservationFactory extends Factory
             'status' => $this->faker->randomElement(ReservationStatus::options()),
             'checkin_date' => $this->faker->date(),
             'checkout_date' => $this->faker->date(),
-            'adults' => $this->faker->numberBetween(1, 5),
-            'children' => $this->faker->numberBetween(0, 5),
-            'infants' => $this->faker->numberBetween(0, 5),
+            'guests_count' => $this->faker->numberBetween(1, 5),
+            'rooms_count' => $this->faker->numberBetween(0, 5),
+            'tendered_amount' => $this->faker->randomFloat(2, 1000, 5000),
+            'balance_amount' => $this->faker->randomFloat(2, 100, 999),
         ];
     }
 }

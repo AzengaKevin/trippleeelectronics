@@ -19,8 +19,9 @@ return new class extends Migration
             $table->date('date')->nullable();
             $table->dateTime('start')->nullable();
             $table->dateTime('end')->nullable();
-            $table->integer('occupancy')->nullable();
+            $table->integer('occupants')->nullable();
             $table->string('status')->nullable();
+            $table->string('discount')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
