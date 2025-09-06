@@ -16,9 +16,13 @@ const props = defineProps({
     },
     currentBuilding: {
         type: Object,
-        required: true,
+        required: false,
     },
     buildings: {
+        type: Array,
+        required: true,
+    },
+    properties: {
         type: Array,
         required: true,
     },
@@ -54,7 +58,7 @@ const { formatDate } = useDate();
 watch(
     filters,
     debounce((newFilters) => {
-        router.get(route('backoffice.bookings.index'), newFilters);
+        router.get(route('backoffice.bookings.show'), newFilters);
     }, 300),
     { deep: true },
 );
@@ -88,14 +92,14 @@ const createNewBooking = (booking) => {
         <title>Bookings</title>
     </Head>
     <BackofficeLayout :breadcrumbs="breadcrumbs" title="Bookings">
-        <div class="flex flex-wrap">
-            <button v-if="auth.user.roles.map((r) => r.name).includes('admin')" @click="openUpdateBuildingDialog" class="btn btn-primary btn-outline">
-                <font-awesome-icon icon="building" />
+        <div class="flex flex-wrap justify-end">
+            <button
+                v-if="auth.user.roles.map((r) => r.name).includes('admin')"
+                @click="openUpdateBuildingDialog"
+                class="btn btn-primary btn-outline rounded-full"
+            >
+                <font-awesome-icon icon="building" /> Change Property
             </button>
-
-            <Link :href="route('backoffice.bookings.create')" class="btn btn-primary btn-outline">
-                <font-awesome-icon icon="plus" /> New Booking
-            </Link>
         </div>
         <div class="grid grid-cols-12 items-start gap-4">
             <div class="top-0 col-span-12 lg:sticky lg:order-last lg:col-span-3">
@@ -111,13 +115,35 @@ const createNewBooking = (booking) => {
                         </div>
                         <div class="space-y-2">
                             <label class="label">
-                                <span class="label-text">Name</span>
+                                <span class="label-text">Query</span>
                             </label>
-                            <input type="text" class="input input-bordered w-full" placeholder="Name" v-model="filters.query" />
+                            <input type="text" class="input input-bordered w-full" placeholder="Query" v-model="filters.query" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="label">
+                                <span class="label-text">Property</span>
+                            </label>
+                            <select class="select select-bordered w-full" v-model="filters.property">
+                                <option :value="undefined">All Properties</option>
+                                <option v-for="property in properties" :key="property.id" :value="property.id">
+                                    {{ property.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="label">
+                                <span class="label-text">Building</span>
+                            </label>
+                            <select class="select select-bordered w-full" v-model="filters.building">
+                                <option :value="undefined">All Buildings</option>
+                                <option v-for="building in buildings" :key="building.id" :value="building.id">
+                                    {{ building.name }}
+                                </option>
+                            </select>
                         </div>
                         <hr />
                         <div class="flex flex-wrap gap-3">
-                            <Link :href="route('backoffice.bookings.index')" class="btn btn-sm btn-primary btn-outline rounded-full">
+                            <Link :href="route('backoffice.bookings.show')" class="btn btn-sm btn-primary btn-outline rounded-full">
                                 <font-awesome-icon icon="times" />
                                 Reset
                             </Link>

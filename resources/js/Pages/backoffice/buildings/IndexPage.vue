@@ -145,6 +145,7 @@ watch(
                                         <tr>
                                             <th>#</th>
                                             <th>Name</th>
+                                            <th>Code</th>
                                             <th>Created At</th>
                                             <th>Updated At</th>
                                             <th>Actions</th>
@@ -159,6 +160,7 @@ watch(
                                                         building.name
                                                     }}</Link>
                                                 </td>
+                                                <td>{{ building.code ?? '-' }}</td>
                                                 <td>{{ formatDate(building.created_at, 'YY-MM-DD HH:mm:ss') }}</td>
                                                 <td>{{ formatDate(building.updated_at, 'YY-MM-DD HH:mm:ss') }}</td>
                                                 <td>
@@ -178,7 +180,7 @@ watch(
                                         </template>
                                         <template v-else>
                                             <tr>
-                                                <td colspan="5" class="text-center">No buildings found</td>
+                                                <td colspan="6" class="text-center">No buildings found</td>
                                             </tr>
                                         </template>
                                     </tbody>

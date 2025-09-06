@@ -40,8 +40,8 @@ const breadcrumbs = [
         href: route('backoffice.dashboard'),
     },
     {
-        title: 'Bookings',
-        href: route('backoffice.bookings.index'),
+        title: 'Reservations',
+        href: route('backoffice.reservations.index'),
     },
     {
         title: 'New',
@@ -99,12 +99,34 @@ const addGuest = () => {
     form.guests.push({ ...guestBlueprint });
 };
 
+const updateGuest = (index, change = false) => {
+    const guest = form.guests[index];
+
+    if (change && guest.client) {
+        guest.name = guest.client.label;
+        guest.email = guest.client.email || '';
+        guest.phone = guest.client.phone || '';
+        guest.address = guest.client.address || '';
+        guest.kra_pin = guest.client.kra_pin || '';
+        guest.id_number = guest.client.id_number || '';
+    }
+};
+
 const removeGuest = (index) => {
     form.guests.splice(index, 1);
 };
 
 const addAllocation = () => {
     form.allocations.push({ ...allocationBlueprint });
+};
+
+const updateAllocation = (index, change = false) => {
+    const allocation = form.allocations[index];
+
+    if (change && allocation.r) {
+        allocation.room = allocation.r.label;
+        allocation.price = allocation.r.price || 0;
+    }
 };
 
 const removeAllocation = (index) => {
@@ -377,7 +399,12 @@ const submit = () => {
                                                         <tr v-for="(guest, index) in form.guests" :key="index">
                                                             <th>{{ index + 1 }}</th>
                                                             <td class="">
-                                                                <app-combobox v-model="guest.client" :load-options="loadClients" size="xs" />
+                                                                <app-combobox
+                                                                    v-model="guest.client"
+                                                                    @handle-change="updateGuest(index, true)"
+                                                                    :load-options="loadClients"
+                                                                    size="xs"
+                                                                />
                                                             </td>
                                                             <td class="space-y-1">
                                                                 <input
@@ -457,9 +484,9 @@ const submit = () => {
                                                         <th>START</th>
                                                         <th>END</th>
                                                         <th>OCC.</th>
-                                                        <th>AMOUNT</th>
+                                                        <th>Price</th>
                                                         <th>DISC.</th>
-                                                        <th>STATUS</th>
+                                                        <th>TTL.</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>
@@ -470,6 +497,7 @@ const submit = () => {
                                                             <td>
                                                                 <app-combobox
                                                                     v-model="allocation.r"
+                                                                    @handle-change="updateAllocation(index, true)"
                                                                     :load-options="loadRooms"
                                                                     :with-custom-option="false"
                                                                     size="xs"
@@ -477,14 +505,14 @@ const submit = () => {
                                                             </td>
                                                             <td class="space-y-1">
                                                                 <input
-                                                                    type="date"
+                                                                    type="datetime-local"
                                                                     v-model="allocation.start"
                                                                     class="input input-xs input-bordered min-w-36 md:w-full"
                                                                 />
                                                             </td>
                                                             <td class="space-y-1">
                                                                 <input
-                                                                    type="date"
+                                                                    type="datetime-local"
                                                                     v-model="allocation.end"
                                                                     class="input input-xs input-bordered min-w-36 md:w-full"
                                                                 />
@@ -493,21 +521,28 @@ const submit = () => {
                                                                 <input
                                                                     type="number"
                                                                     v-model="allocation.occupants"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
+                                                                    class="input input-xs input-bordered min-w-20 md:w-full"
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <input
+                                                                    type="number"
+                                                                    v-model="allocation.price"
+                                                                    class="input input-xs input-bordered min-w-20 md:w-full"
                                                                 />
                                                             </td>
                                                             <td>
                                                                 <input
                                                                     type="number"
                                                                     v-model="allocation.discount_rate"
-                                                                    class="input input-xs input-bordered min-w-24 md:w-full"
+                                                                    class="input input-xs input-bordered min-w-20 md:w-full"
                                                                 />
                                                             </td>
                                                             <td>
                                                                 <input
                                                                     type="number"
                                                                     v-model="allocation.total_price"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
+                                                                    class="input input-xs input-bordered min-w-20 md:w-full"
                                                                 />
                                                             </td>
                                                             <td>

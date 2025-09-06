@@ -12,6 +12,7 @@ import {
     faBriefcase,
     faBuilding,
     faCalendar,
+    faCalendarAlt,
     faCalendarCheck,
     faCartPlus,
     faCashRegister,
@@ -187,3 +188,4 @@ library.add(faCalendar);
 library.add(faBed);
 library.add(faUserGroup);
 library.add(faSquareCheck);
+library.add(faCalendarAlt);
