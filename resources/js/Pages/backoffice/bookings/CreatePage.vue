@@ -1,8 +1,9 @@
 <script setup>
 import AppCombobox from '@/components/AppCombobox.vue';
 import useAutologout from '@/composables/useAutologout';
+import useClients from '@/composables/useClients';
 import useLogout from '@/composables/useLogout';
-import useProducts from '@/composables/useProducts';
+import useRooms from '@/composables/useRooms';
 import useSwal from '@/composables/useSwal';
 
 import { Head, Link, useForm } from '@inertiajs/vue3';
@@ -84,10 +85,11 @@ const guestBlueprint = {
 };
 
 const allocationBlueprint = {
-    room: null,
+    r: null,
+    room: '',
     start: '',
     end: '',
-    occupancy: 1,
+    occupants: 1,
     price: 0,
     discount: 0,
     amount: 0,
@@ -105,7 +107,7 @@ const addAllocation = () => {
     form.allocations.push({ ...allocationBlueprint });
 };
 
-const removeAAllocation = (index) => {
+const removeAllocation = (index) => {
     form.allocations.splice(index, 1);
 };
 
@@ -134,9 +136,11 @@ const closeStayLoggedInDialog = () => {
 
 const { logout } = useLogout();
 
-const { showFeedbackSwal } = useSwal();
+const { showFeedbackSwal, showInertiaErrorsSwal } = useSwal();
 
-const { loadProducts } = useProducts();
+const { loadClients } = useClients();
+
+const { loadRooms } = useRooms();
 
 useAutologout({
     onLogout: () => logout(false),
@@ -187,9 +191,49 @@ watch(
 );
 
 const reference = ref(props.params?.reference);
+
+const submit = () => {
+    form.transform((data) => {
+        data.guests = data.guests
+            .filter((g) => g.client != null)
+            .map((item) => {
+                return {
+                    id: item.client.value,
+                    email: item.email,
+                    phone: item.phone,
+                    address: item.address,
+                    kra_pin: item.kra_pin,
+                    id_number: item.id_number,
+                };
+            });
+
+        data.allocations = data.allocations
+            .filter((a) => a.r != null)
+            .map((item) => {
+                return {
+                    room: item.r.value,
+                    start: item.start,
+                    end: item.end,
+                    occupants: item.occupants,
+                    price: item.price,
+                    discount: item.discount,
+                    amount: item.amount,
+                };
+            });
+
+        return data;
+    }).post(route('backoffice.reservations.store'), {
+        onError: (errors) => {
+            showInertiaErrorsSwal(errors);
+        },
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
 </script>
 
 <template>
+
     <Head>
         <title>New Booking</title>
     </Head>
@@ -218,7 +262,8 @@ const reference = ref(props.params?.reference);
                     <a :href="route('backoffice.messages.index')" class="btn btn-sm btn-ghost btn-circle">
                         <div class="indicator">
                             <font-awesome-icon icon="envelope" size="xl" />
-                            <span v-if="auth.user.unread_messages_count > 0" class="badge badge-xs badge-secondary indicator-item size-4">
+                            <span v-if="auth.user.unread_messages_count > 0"
+                                class="badge badge-xs badge-secondary indicator-item size-4">
                                 {{ auth.user.unread_messages_count }}
                             </span>
                         </div>
@@ -228,12 +273,14 @@ const reference = ref(props.params?.reference);
                         <button tabindex="0" class="btn btn-sm btn-ghost btn-circle">
                             <span class="indicator">
                                 <font-awesome-icon icon="bell" size="xl" />
-                                <span v-if="auth.user.unread_notifications_count > 0" class="badge badge-xs badge-secondary indicator-item size-4">
+                                <span v-if="auth.user.unread_notifications_count > 0"
+                                    class="badge badge-xs badge-secondary indicator-item size-4">
                                     {{ auth.user.unread_notifications_count }}
                                 </span>
                             </span>
                         </button>
-                        <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-64 p-2 shadow">
+                        <ul tabindex="0"
+                            class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-64 p-2 shadow">
                             <li v-if="auth.user.notifications.length === 0">
                                 <span class="text-gray-500">No notifications</span>
                             </li>
@@ -252,7 +299,8 @@ const reference = ref(props.params?.reference);
                                 <img :alt="`${auth.user.name}'s avatar`" :src="auth.user.avatar_url" />
                             </div>
                         </div>
-                        <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                        <ul tabindex="0"
+                            class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                             <li>
                                 <a role="button" href="#" @click="logout" method="post">
                                     <font-awesome-icon icon="sign-out" />
@@ -280,20 +328,18 @@ const reference = ref(props.params?.reference);
                 <div ref="topbarElement" class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                         <label class="input input-xs w-full bg-[#0000fe] text-white">
-                            <span class="label font-bold text-white"><font-awesome-icon icon="search" size="sm" /></span>
+                            <span class="label font-bold text-white"><font-awesome-icon icon="search"
+                                    size="sm" /></span>
                             <input type="search" v-model="reference" placeholder="Search Order By Reference" />
                         </label>
                     </div>
 
                     <div class="scrollbar-thin w-full overflow-x-auto whitespace-nowrap lg:grow">
                         <div class="flex gap-3">
-                            <Link
-                                v-for="o in reservations"
-                                :href="route('backoffice.pos', { reference: o.reference })"
+                            <Link v-for="o in reservations" :href="route('backoffice.pos', { reference: o.reference })"
                                 class="btn btn-xs btn-primary"
-                                :class="{ 'btn-outline': order?.reference !== o.reference }"
-                            >
-                                # {{ o.reference }}
+                                :class="{ 'btn-outline': order?.reference !== o.reference }">
+                            # {{ o.reference }}
                             </Link>
                         </div>
                     </div>
@@ -331,45 +377,32 @@ const reference = ref(props.params?.reference);
                                                         <tr v-for="(guest, index) in form.guests" :key="index">
                                                             <th>{{ index + 1 }}</th>
                                                             <td class="">
-                                                                <app-combobox v-model="guest.client" :load-options="loadProducts" size="xs" />
+                                                                <app-combobox v-model="guest.client"
+                                                                    :load-options="loadClients" size="xs" />
                                                             </td>
                                                             <td class="space-y-1">
-                                                                <input
-                                                                    type="email"
-                                                                    v-model="guest.email"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
-                                                                />
+                                                                <input type="email" v-model="guest.email"
+                                                                    class="input input-xs input-bordered min-w-36 md:w-full" />
                                                             </td>
                                                             <td class="space-y-1">
-                                                                <input
-                                                                    type="tel"
-                                                                    v-model="guest.phone"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
-                                                                />
+                                                                <input type="tel" v-model="guest.phone"
+                                                                    class="input input-xs input-bordered min-w-36 md:w-full" />
                                                             </td>
                                                             <td>
-                                                                <input
-                                                                    type="text"
-                                                                    v-model="guest.id_number"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
-                                                                />
+                                                                <input type="text" v-model="guest.id_number"
+                                                                    class="input input-xs input-bordered min-w-36 md:w-full" />
                                                             </td>
                                                             <td>
-                                                                <input
-                                                                    type="text"
-                                                                    v-model="guest.address"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
-                                                                />
+                                                                <input type="text" v-model="guest.address"
+                                                                    class="input input-xs input-bordered min-w-36 md:w-full" />
                                                             </td>
                                                             <td>
-                                                                <input
-                                                                    type="text"
-                                                                    v-model="guest.kra_pin"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
-                                                                />
+                                                                <input type="text" v-model="guest.kra_pin"
+                                                                    class="input input-xs input-bordered min-w-36 md:w-full" />
                                                             </td>
                                                             <td>
-                                                                <button type="button" @click="removeGuest(index)" class="btn btn-xs btn-square btn-error">
+                                                                <button type="button" @click="removeGuest(index)"
+                                                                    class="btn btn-xs btn-square btn-error">
                                                                     <font-awesome-icon icon="trash" size="sm" />
                                                                 </button>
                                                             </td>
@@ -384,7 +417,8 @@ const reference = ref(props.params?.reference);
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="9">
-                                                            <button type="button" @click="addGuest" class="btn btn-xs btn-light">Add Guest</button>
+                                                            <button type="button" @click="addGuest"
+                                                                class="btn btn-xs btn-light">Add Guest</button>
                                                         </td>
                                                     </tr>
                                                 </tfoot>
@@ -415,48 +449,37 @@ const reference = ref(props.params?.reference);
                                                 </thead>
                                                 <tbody>
                                                     <template v-if="form.allocations.length">
-                                                        <tr v-for="(allocation, index) in form.allocations" :key="index">
+                                                        <tr v-for="(allocation, index) in form.allocations"
+                                                            :key="index">
                                                             <th>{{ index + 1 }}</th>
                                                             <td>
-                                                                <app-combobox v-model="allocation.item" :load-options="loadProducts" size="xs" />
+                                                                <app-combobox v-model="allocation.r"
+                                                                    :load-options="loadRooms"
+                                                                    :with-custom-option="false" size="xs" />
                                                             </td>
                                                             <td class="space-y-1">
-                                                                <input
-                                                                    type="date"
-                                                                    v-model="allocation.start"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
-                                                                />
+                                                                <input type="date" v-model="allocation.start"
+                                                                    class="input input-xs input-bordered min-w-36 md:w-full" />
                                                             </td>
                                                             <td class="space-y-1">
-                                                                <input
-                                                                    type="date"
-                                                                    v-model="allocation.end"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
-                                                                />
+                                                                <input type="date" v-model="allocation.end"
+                                                                    class="input input-xs input-bordered min-w-36 md:w-full" />
                                                             </td>
                                                             <td>
-                                                                <input
-                                                                    type="number"
-                                                                    v-model="allocation.occupancy"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
-                                                                />
+                                                                <input type="number" v-model="allocation.occupants"
+                                                                    class="input input-xs input-bordered min-w-36 md:w-full" />
                                                             </td>
                                                             <td>
-                                                                <input
-                                                                    type="number"
-                                                                    v-model="allocation.discount_rate"
-                                                                    class="input input-xs input-bordered min-w-24 md:w-full"
-                                                                />
+                                                                <input type="number" v-model="allocation.discount_rate"
+                                                                    class="input input-xs input-bordered min-w-24 md:w-full" />
                                                             </td>
                                                             <td>
-                                                                <input
-                                                                    type="number"
-                                                                    v-model="allocation.total_price"
-                                                                    class="input input-xs input-bordered min-w-36 md:w-full"
-                                                                />
+                                                                <input type="number" v-model="allocation.total_price"
+                                                                    class="input input-xs input-bordered min-w-36 md:w-full" />
                                                             </td>
                                                             <td>
-                                                                <button type="button" @click="removeAllocation(index)" class="btn btn-xs btn-square btn-error">
+                                                                <button type="button" @click="removeAllocation(index)"
+                                                                    class="btn btn-xs btn-square btn-error">
                                                                     <font-awesome-icon icon="trash" size="sm" />
                                                                 </button>
                                                             </td>
@@ -464,14 +487,16 @@ const reference = ref(props.params?.reference);
                                                     </template>
                                                     <template v-else>
                                                         <tr>
-                                                            <td colspan="9" class="text-center">No allocations added yet</td>
+                                                            <td colspan="9" class="text-center">No allocations added yet
+                                                            </td>
                                                         </tr>
                                                     </template>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="9">
-                                                            <button type="button" @click="addAllocation" class="btn btn-xs btn-light">
+                                                            <button type="button" @click="addAllocation"
+                                                                class="btn btn-xs btn-light">
                                                                 Add Allocation
                                                             </button>
                                                         </td>
@@ -495,42 +520,32 @@ const reference = ref(props.params?.reference);
                                                 <tr>
                                                     <th>CHECK IN</th>
                                                     <td>
-                                                        <input
-                                                            v-model="form.checkin_date"
-                                                            type="date"
-                                                            step="0.50"
+                                                        <input v-model="form.checkin_date" type="date" step="0.50"
                                                             placeholder="Enter Check-in Date"
-                                                            class="input input-bordered input-xs w-full font-semibold"
-                                                        />
+                                                            class="input input-bordered input-xs w-full font-semibold" />
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th>CHECK OUT</th>
                                                     <td>
-                                                        <input
-                                                            v-model="form.checkout_date"
-                                                            type="date"
-                                                            step="0.50"
+                                                        <input v-model="form.checkout_date" type="date" step="0.50"
                                                             placeholder="Enter Check-out Date"
-                                                            class="input input-bordered input-xs w-full font-semibold"
-                                                        />
+                                                            class="input input-bordered input-xs w-full font-semibold" />
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th>SOURCE</th>
                                                     <td>
-                                                        <input
-                                                            v-model="form.source"
-                                                            type="text"
+                                                        <input v-model="form.source" type="text"
                                                             placeholder="Enter Booking Source"
-                                                            class="input input-bordered input-xs w-full font-semibold"
-                                                        />
+                                                            class="input input-bordered input-xs w-full font-semibold" />
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th>STATUS</th>
                                                     <td>
-                                                        <select v-model="form.status" class="input input-bordered input-xs w-full font-semibold">
+                                                        <select v-model="form.status"
+                                                            class="input input-bordered input-xs w-full font-semibold">
                                                             <option value="pending">Pending</option>
                                                             <option value="confirmed">Confirmed</option>
                                                             <option value="checked_in">Checked In</option>
@@ -554,43 +569,32 @@ const reference = ref(props.params?.reference);
                                                 <tr>
                                                     <th>AMOUNT</th>
                                                     <td>
-                                                        <input
-                                                            v-model="form.amount"
-                                                            type="number"
-                                                            step="0.50"
+                                                        <input v-model="form.amount" type="number" step="0.50"
                                                             placeholder="Enter Amount"
-                                                            class="input input-bordered input-xs w-full font-semibold"
-                                                        />
+                                                            class="input input-bordered input-xs w-full font-semibold" />
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th>TENDERED</th>
                                                     <td>
-                                                        <input
-                                                            v-model="form.tendered"
-                                                            type="number"
-                                                            step="0.50"
+                                                        <input v-model="form.tendered" type="number" step="0.50"
                                                             placeholder="Enter Tendered Amount"
-                                                            class="input input-bordered input-xs w-full font-semibold"
-                                                        />
+                                                            class="input input-bordered input-xs w-full font-semibold" />
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th>BALANCE</th>
                                                     <td>
-                                                        <input
-                                                            v-model="form.balance"
-                                                            type="number"
-                                                            step="0.50"
+                                                        <input v-model="form.balance" type="number" step="0.50"
                                                             placeholder="Enter Balance Amount"
-                                                            class="input input-bordered input-xs w-full font-semibold"
-                                                        />
+                                                            class="input input-bordered input-xs w-full font-semibold" />
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th>STATUS</th>
                                                     <td>
-                                                        <select v-model="form.status" class="input input-bordered input-xs w-full font-semibold">
+                                                        <select v-model="form.status"
+                                                            class="input input-bordered input-xs w-full font-semibold">
                                                             <option value="pending">Pending</option>
                                                             <option value="confirmed">Confirmed</option>
                                                             <option value="checked_in">Checked In</option>
@@ -609,34 +613,24 @@ const reference = ref(props.params?.reference);
                             <div class="card h-full bg-[#000000] shadow">
                                 <div class="card-body space-y-2 p-1">
                                     <div class="grid grid-cols-5 gap-2">
-                                        <a
-                                            :href="'#'"
-                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
-                                        >
+                                        <a :href="'#'"
+                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white">
                                             <span class="font-bold uppercase">New</span>
                                         </a>
-                                        <button
-                                            type="submit"
-                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
-                                        >
+                                        <button type="submit"
+                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white">
                                             <span class="font-bold uppercase">Save</span>
                                         </button>
-                                        <button
-                                            type="button"
-                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
-                                        >
+                                        <button type="button"
+                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white">
                                             <span class="font-bold uppercase">Hold</span>
                                         </button>
-                                        <button
-                                            type="button"
-                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
-                                        >
+                                        <button type="button"
+                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white">
                                             <span class="font-bold uppercase">Print</span>
                                         </button>
-                                        <button
-                                            type="button"
-                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white"
-                                        >
+                                        <button type="button"
+                                            class="hover:bg-primary btn-outline flex aspect-square w-full flex-col items-center justify-center gap-3 rounded bg-white p-2 hover:text-white">
                                             <span class="font-bold uppercase">Cancel</span>
                                         </button>
                                     </div>
@@ -649,7 +643,8 @@ const reference = ref(props.params?.reference);
         </div>
         <div class="drawer-side z-[2]">
             <button type="button" @click="toggleSidebar" aria-label="close sidebar" class="drawer-overlay"></button>
-            <ul class="menu text-base-content scrollbar-thin relative h-full min-h-full w-96 flex-nowrap overflow-y-auto bg-[#a0d9ef] p-2">
+            <ul
+                class="menu text-base-content scrollbar-thin relative h-full min-h-full w-96 flex-nowrap overflow-y-auto bg-[#a0d9ef] p-2">
                 <li class="sticky start-0 end-0 top-0 z-[1] w-full bg-[#a0d9ef]">
                     <a :href="route('welcome')" class="item-center flex gap-2">
                         <Store />
