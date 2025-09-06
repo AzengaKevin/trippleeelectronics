@@ -1,7 +1,6 @@
 <script setup>
 import AppPagination from '@/components/AppPagination.vue';
 import useDate from '@/composables/useDate';
-import usePrice from '@/composables/usePrice';
 import BackofficeLayout from '@/layouts/BackofficeLayout.vue';
 import BookRoomDialog from '@/Pages/backoffice/bookings/BookRoomDialog.vue';
 import UpdateBuildingForm from '@/Pages/backoffice/bookings/UpdateBuildingForm.vue';
@@ -52,7 +51,6 @@ const filters = reactive({
 
 const updateBuildingDialog = ref(null);
 
-const { formatPrice } = usePrice();
 const { formatDate } = useDate();
 
 watch(
@@ -62,12 +60,6 @@ watch(
     }, 300),
     { deep: true },
 );
-
-const openUpdateBuildingDialog = () => {
-    if (updateBuildingDialog.value) {
-        updateBuildingDialog.value.showModal();
-    }
-};
 
 const closeUpdateBuildingDialog = () => {
     if (updateBuildingDialog.value) {
@@ -92,15 +84,6 @@ const createNewBooking = (booking) => {
         <title>Bookings</title>
     </Head>
     <BackofficeLayout :breadcrumbs="breadcrumbs" title="Bookings">
-        <div class="flex flex-wrap justify-end">
-            <button
-                v-if="auth.user.roles.map((r) => r.name).includes('admin')"
-                @click="openUpdateBuildingDialog"
-                class="btn btn-primary btn-outline rounded-full"
-            >
-                <font-awesome-icon icon="building" /> Change Property
-            </button>
-        </div>
         <div class="grid grid-cols-12 items-start gap-4">
             <div class="top-0 col-span-12 lg:sticky lg:order-last lg:col-span-3">
                 <div class="card bg-[#87ceeb]">

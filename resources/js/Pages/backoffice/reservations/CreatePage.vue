@@ -93,6 +93,7 @@ const allocationBlueprint = {
     price: 0,
     discount: 0,
     amount: 0,
+    total_price: 0,
 };
 
 const addGuest = () => {
@@ -123,10 +124,16 @@ const addAllocation = () => {
 const updateAllocation = (index, change = false) => {
     const allocation = form.allocations[index];
 
+    const numberOfNights = allocation.start && allocation.end ? (new Date(allocation.end) - new Date(allocation.start)) / (1000 * 60 * 60 * 24) : 1;
+
     if (change && allocation.r) {
         allocation.room = allocation.r.label;
         allocation.price = allocation.r.price || 0;
     }
+
+    const discount = ((allocation.discount || 0) * allocation.price) / 100;
+
+    allocation.total_price = numberOfNights * (allocation.price - discount);
 };
 
 const removeAllocation = (index) => {
@@ -136,7 +143,6 @@ const removeAllocation = (index) => {
 const form = useForm({
     guests: [{ ...guestBlueprint }],
     allocations: [{ ...allocationBlueprint }],
-    total_price: 0,
     checkin_date: '',
     checkout_date: '',
     guests_count: 1,
@@ -145,6 +151,16 @@ const form = useForm({
     balance_amount: 0,
     total_amount: 0,
 });
+
+watch(
+    () => form.allocations,
+    () => {
+        form.total_amount = form.allocations.filter((a) => a.r != null).reduce((sum, allocation) => sum + (allocation.total_price || 0), 0);
+    },
+    {
+        deep: true,
+    },
+);
 
 const toggleSidebar = () => {
     showSidebar.value = !showSidebar.value;
@@ -248,7 +264,7 @@ const submit = () => {
         onError: (errors) => {
             showInertiaErrorsSwal(errors);
         },
-        onSuccess: (response) => {
+        onSuccess: () => {
             form.reset();
         },
         preserveState: true,
@@ -507,6 +523,7 @@ const submit = () => {
                                                                 <input
                                                                     type="datetime-local"
                                                                     v-model="allocation.start"
+                                                                    @input="updateAllocation(index)"
                                                                     class="input input-xs input-bordered min-w-36 md:w-full"
                                                                 />
                                                             </td>
@@ -514,6 +531,7 @@ const submit = () => {
                                                                 <input
                                                                     type="datetime-local"
                                                                     v-model="allocation.end"
+                                                                    @input="updateAllocation(index)"
                                                                     class="input input-xs input-bordered min-w-36 md:w-full"
                                                                 />
                                                             </td>
@@ -521,6 +539,7 @@ const submit = () => {
                                                                 <input
                                                                     type="number"
                                                                     v-model="allocation.occupants"
+                                                                    @input="updateAllocation(index)"
                                                                     class="input input-xs input-bordered min-w-20 md:w-full"
                                                                 />
                                                             </td>
@@ -528,13 +547,15 @@ const submit = () => {
                                                                 <input
                                                                     type="number"
                                                                     v-model="allocation.price"
+                                                                    @input="updateAllocation(index)"
                                                                     class="input input-xs input-bordered min-w-20 md:w-full"
                                                                 />
                                                             </td>
                                                             <td>
                                                                 <input
                                                                     type="number"
-                                                                    v-model="allocation.discount_rate"
+                                                                    v-model="allocation.discount"
+                                                                    @input="updateAllocation(index)"
                                                                     class="input input-xs input-bordered min-w-20 md:w-full"
                                                                 />
                                                             </td>
@@ -542,6 +563,7 @@ const submit = () => {
                                                                 <input
                                                                     type="number"
                                                                     v-model="allocation.total_price"
+                                                                    disabled
                                                                     class="input input-xs input-bordered min-w-20 md:w-full"
                                                                 />
                                                             </td>
@@ -649,7 +671,7 @@ const submit = () => {
                                                     <th>AMOUNT</th>
                                                     <td>
                                                         <input
-                                                            v-model="form.amount"
+                                                            v-model="form.total_amount"
                                                             type="number"
                                                             step="0.50"
                                                             placeholder="Enter Amount"
@@ -661,7 +683,7 @@ const submit = () => {
                                                     <th>TENDERED</th>
                                                     <td>
                                                         <input
-                                                            v-model="form.tendered"
+                                                            v-model="form.tendered_amount"
                                                             type="number"
                                                             step="0.50"
                                                             placeholder="Enter Tendered Amount"
@@ -673,7 +695,7 @@ const submit = () => {
                                                     <th>BALANCE</th>
                                                     <td>
                                                         <input
-                                                            v-model="form.balance"
+                                                            v-model="form.balance_amount"
                                                             type="number"
                                                             step="0.50"
                                                             placeholder="Enter Balance Amount"

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('checkout_date')->nullable();
             $table->integer('guests_count')->nullable();
             $table->integer('rooms_count')->nullable();
+            $table->decimal('total_amount', 10, 2)->nullable();
             $table->decimal('tendered_amount', 10, 2)->nullable();
             $table->decimal('balance_amount', 10, 2)->nullable();
             $table->timestamps();
