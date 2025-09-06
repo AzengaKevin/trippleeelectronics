@@ -3,5 +3,4 @@
 use App\Http\Controllers\Backoffice\BookingController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [BookingController::class, 'index'])->middleware(['can:browse-bookings'])->name('index');
-Route::get('/create', [BookingController::class, 'create'])->middleware(['can:create-bookings'])->name('create');
+Route::get('/', [BookingController::class, 'show'])->middleware(['can:browse-bookings'])->name('show');

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Reservation;
+use Illuminate\Support\Facades\DB;
 
 class ReservationService
 {
@@ -12,8 +13,62 @@ class ReservationService
         private readonly AllocationService $allocationService,
     ) {}
 
-    public function create(array $data)
+    public function get(
+        ?string $query = null,
+        ?int $limit = null,
+        ?int $perPage = 24,
+        ?array $with = null,
+        ?array $withCount = null,
+        ?string $orderBy = 'created_at',
+        ?string $orderDirection = 'desc',
+    ) {
+
+        $reservationQuery = Reservation::query();
+
+        $reservationQuery->when($query, function ($defaultQuery, $query) {
+
+            $dbDriver = DB::getPdo()->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
+            $caseInsensitiveColumnQuery = match ($dbDriver) {
+                'mysql' => 'LOWER(%s) LIKE LOWER(?)',
+                'pgsql' => '%s ILIKE ?',
+                'sqlite' => '%s LIKE ? COLLATE NOCASE',
+                default => '%s LIKE ?',
+            };
+
+            $defaultQuery->where(function ($nestedInnerQuery) use ($query, $caseInsensitiveColumnQuery) {
+                $nestedInnerQuery->whereHas('primaryIndividual', function ($level2NestedInnerQuery) use ($query, $caseInsensitiveColumnQuery) {
+
+                    $level2NestedInnerQuery->whereRaw(sprintf($caseInsensitiveColumnQuery, 'name'), "%{$query}%")
+                        ->orWhereRaw(sprintf($caseInsensitiveColumnQuery, 'phone'), "%{$query}%")
+                        ->orWhereRaw(sprintf($caseInsensitiveColumnQuery, 'email'), "%{$query}%");
+                })->orWhereHas('author', function ($level2NestedInnerQuery) use ($query, $caseInsensitiveColumnQuery) {
+
+                    $level2NestedInnerQuery->whereRaw(sprintf($caseInsensitiveColumnQuery, 'name'), "%{$query}%")
+                        ->orWhereRaw(sprintf($caseInsensitiveColumnQuery, 'phone'), "%{$query}%")
+                        ->orWhereRaw(sprintf($caseInsensitiveColumnQuery, 'email'), "%{$query}%");
+                })->orWhereRaw(sprintf($caseInsensitiveColumnQuery, 'reference'), "%{$query}%");
+            });
+        });
+
+        $reservationQuery->when($limit, fn ($query) => $query->limit($limit));
+
+        $reservationQuery->when($with, fn ($query) => $query->with($with));
+
+        $reservationQuery->when($withCount, fn ($query) => $query->withCount($withCount));
+
+        $reservationQuery->orderBy($orderBy, $orderDirection);
+
+        return is_null($perPage)
+            ? $reservationQuery->get()
+            : $reservationQuery->paginate($perPage);
+    }
+
+    public function create(array $data): Reservation
     {
+
+        info($data);
+
         $attributes = [
             'author_user_id' => data_get($data, 'current_user_id'),
             'property_id' => data_get($data, 'property_id'),
@@ -30,7 +85,7 @@ class ReservationService
         /** @var Reservation $reservation */
         $reservation = Reservation::query()->create($attributes);
 
-        $individuals = collect(data_get($data, 'guests'))->map(fn ($item) => $this->clientService->upsert($item));
+        $individuals = collect(data_get($data, 'guests'))->map(fn ($item) => $this->individualService->upsert($item));
 
         $primaryIndividual = $individuals->first();
 

@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ResourceSeeder::class,
             ServiceSeeder::class,
             PropertySeeder::class,
+            BuildingSeeder::class,
             AmenitySeeder::class,
         ]);
     }

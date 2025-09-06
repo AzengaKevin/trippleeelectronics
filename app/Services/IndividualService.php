@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Individual;
 use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 
 class IndividualService
 {
@@ -82,30 +83,41 @@ class IndividualService
     public function upsert(array $data): ?Individual
     {
 
-        $individualByPhone = Individual::query()
-            ->where('phone', data_get($data, 'phone'))
-            ->first();
+        $id = data_get($data, 'id');
 
-        $individualByEmail = Individual::query()
-            ->where('email', data_get($data, 'email'))
-            ->first();
+        $individual = null;
 
-        $individual = $individualByPhone ?? $individualByEmail;
+        if (! empty($id)) {
 
-        if ($individual) {
-
-            $this->update($individual, [
-                'name' => data_get($data, 'name'),
-                'username' => data_get($data, 'username'),
+            $values = [
+                'email' => data_get($data, 'email'),
+                'phone' => data_get($data, 'phone'),
                 'address' => data_get($data, 'address'),
                 'kra_pin' => data_get($data, 'kra_pin'),
                 'id_number' => data_get($data, 'id_number'),
-            ]);
+            ];
 
-            return $individual->fresh();
+            if (Uuid::isValid($id)) {
+
+                $individual = Individual::query()->find($id);
+
+                $individual->fill($values);
+
+                if ($individual->isDirty()) {
+
+                    $individual->save();
+                }
+            } else {
+
+                $attributes = [
+                    'name' => $id,
+                ];
+
+                $individual = Individual::query()->updateOrCreate($attributes, $values);
+            }
         }
 
-        return $this->create($data);
+        return $individual;
     }
 
     public function delete(Individual $individual, bool $forever = false): bool

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Backoffice;
 
 use App\Http\Controllers\Controller;
 use App\Models\Building;
-use App\Models\Reservation;
 use App\Services\BookingService;
 use App\Services\BuildingService;
 use App\Services\PropertyService;
@@ -15,7 +14,7 @@ use Inertia\Response;
 
 class BookingController extends Controller
 {
-    private Building $currentBuilding;
+    private ?Building $currentBuilding = null;
 
     public function __construct(
         private readonly RoomService $roomService,
@@ -26,7 +25,7 @@ class BookingController extends Controller
         $this->currentBuilding = Building::query()->first();
     }
 
-    public function index(Request $request): Response
+    public function show(Request $request): Response
     {
         $params = $request->only(['query', 'date']);
 
@@ -36,34 +35,18 @@ class BookingController extends Controller
             $filters['date'] = now()->toDateString();
         }
 
+        $properties = $this->propertyService->get(perPage: null);
+
         $buildings = $this->buildingService->get(perPage: null);
 
-        $bookings = $this->bookingService->get(...$filters, building: $this->currentBuilding, with: ['allocation.reservation.author', 'allocation.reservation.primaryIndividual']);
+        $bookings = $this->bookingService->get(...$filters, with: ['allocation.reservation.author', 'allocation.reservation.primaryIndividual']);
 
-        return Inertia::render('backoffice/bookings/IndexPage', [
+        return Inertia::render('backoffice/bookings/ShowPage', [
             'currentBuilding' => $this->currentBuilding,
             'buildings' => $buildings,
+            'properties' => $properties,
             'bookings' => $bookings,
             'params' => $params,
-        ]);
-    }
-
-    public function create()
-    {
-        return Inertia::render('backoffice/bookings/CreatePage');
-    }
-
-    public function show(Reservation $reservation)
-    {
-        return Inertia::render('backoffice/bookings/ShowPage', [
-            'reservation' => $reservation,
-        ]);
-    }
-
-    public function edit(Reservation $reservation)
-    {
-        return Inertia::render('backoffice/bookings/EditPage', [
-            'reservation' => $reservation,
         ]);
     }
 }

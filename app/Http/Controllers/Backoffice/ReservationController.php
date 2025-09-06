@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Backoffice;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Responses\Concerns\RedirectWithFeedback;
+use App\Models\Reservation;
 use App\Models\User;
 use App\Services\ReservationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class ReservationController extends Controller
 {
@@ -24,8 +26,19 @@ class ReservationController extends Controller
 
     public function index(Request $request)
     {
-
         $params = $request->only('query');
+
+        $reservations = $this->reservationService->get(...$params, with: ['author', 'primaryIndividual']);
+
+        return Inertia::render('backoffice/reservations/IndexPage', [
+            'reservations' => $reservations,
+            'params' => $params,
+        ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('backoffice/reservations/CreatePage');
     }
 
     public function store(StoreReservationRequest $storeReservationRequest)
@@ -47,5 +60,14 @@ class ReservationController extends Controller
 
             return $this->sendErrorRedirect('Creating reservation failed', $throwable);
         }
+    }
+
+    public function show(Reservation $reservation)
+    {
+        $reservation->load(['author', 'primaryIndividual']);
+
+        return Inertia::render('backoffice/reservations/ShowPage', [
+            'reservation' => $reservation,
+        ]);
     }
 }

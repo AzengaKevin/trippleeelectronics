@@ -89,16 +89,4 @@ class BookingService
             ? $bookingQuery->get()
             : $bookingQuery->paginate($perPage);
     }
-
-    public function bookRoom(Room $room, array $data)
-    {
-
-        // Create a reservation
-
-        // Create an allocation to the booking
-
-        //
-    }
-
-    public function cancelBooking(Allocation $allocation, array $data) {}
 }

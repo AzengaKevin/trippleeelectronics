@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateRoomRequest;
 use App\Http\Responses\Concerns\RedirectWithFeedback;
 use App\Imports\RoomImport;
 use App\Models\Room;
+use App\Services\BookingService;
 use App\Services\BuildingService;
 use App\Services\ExcelService;
 use App\Services\RoomService;
@@ -26,6 +27,7 @@ class RoomController extends Controller
     public function __construct(
         private readonly RoomService $roomService,
         private readonly BuildingService $buildingService,
+        private readonly BookingService $bookingService,
     ) {}
 
     public function index(Request $request): Response
@@ -42,6 +44,27 @@ class RoomController extends Controller
     {
         return Inertia::render('backoffice/rooms/CreatePage', [
             ...$this->getFormData(),
+        ]);
+    }
+
+    public function occupancy(Request $request): Response
+    {
+        $params = $request->only(['query', 'date']);
+
+        $filters = $params;
+
+        if (is_null(data_get($filters, 'date'))) {
+            $filters['date'] = now()->toDateString();
+        }
+
+        $buildings = $this->buildingService->get(perPage: null);
+
+        $bookings = $this->bookingService->get(...$filters, with: ['allocation.reservation.author', 'allocation.reservation.primaryIndividual']);
+
+        return Inertia::render('backoffice/bookings/OccupancyPage', [
+            'buildings' => $buildings,
+            'bookings' => $bookings,
+            'params' => $params,
         ]);
     }
 

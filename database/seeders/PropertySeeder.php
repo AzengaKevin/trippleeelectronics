@@ -12,7 +12,7 @@ class PropertySeeder extends Seeder
 
         $data = [
             [
-                'name' => 'Green Homes',
+                'name' => 'Greenview Homes',
             ],
             [
                 'name' => 'Normad Homes',
